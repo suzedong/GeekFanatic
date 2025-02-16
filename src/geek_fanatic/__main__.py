@@ -14,7 +14,7 @@ from PySide6.QtCore import Qt, QDir
 from PySide6.QtGui import QAction
 
 from geek_fanatic.core.app import GeekFanatic
-from geek_fanatic.plugins.editor.widgets import Editor
+from geek_fanatic.plugins.editor.ui.widgets.editor import Editor
 
 class MainWindow(QMainWindow):
     """主窗口"""
