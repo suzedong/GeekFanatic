@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Qt
+*.qmlc
+*.jsc
+*.qrc.depends
+qrc_*.py
+*.qm
+
+# Poetry
+dist/
+build/
+*.egg-info/
+
+# 操作系统
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# 日志和数据文件
+*.log
+*.sqlite
+*.db
+
+# 本地配置
+.env
+.env.local
+.env.*
+
+# 其他
+.cache/
+tmp/
+temp/

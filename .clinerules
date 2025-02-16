@@ -20,7 +20,7 @@
 - 使用 pyproject.toml 和 poetry 管理项目
 - 遵循标准的项目结构：
   ```
-  project/
+  /
   ├── src/
   │   └── package/
   ├── tests/
@@ -98,6 +98,7 @@
 
 ### 终端设置
 - Windows 环境下默认使用 PowerShell
+- 在PowerShell中需要使用分号来连接命令
 - PowerShell 配置要求：
   ```powershell
   # PowerShell 配置文件设置
