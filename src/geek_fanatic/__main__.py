@@ -5,6 +5,15 @@ import os
 import sys
 from pathlib import Path
 
+# 添加项目根目录到Python路径
+project_root = str(Path(__file__).parent.parent.parent)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# 修改为相对导入
+from .core.app import GeekFanatic
+from .plugins.editor.ui.widgets.editor import Editor
+
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget,
     QHBoxLayout, QSplitter, QTextEdit, QTreeView, QDockWidget, QMenuBar,
@@ -12,9 +21,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QDir
 from PySide6.QtGui import QAction
-
-from geek_fanatic.core.app import GeekFanatic
-from geek_fanatic.plugins.editor.ui.widgets.editor import Editor
 
 class MainWindow(QMainWindow):
     """主窗口"""
@@ -245,6 +251,10 @@ class MainWindow(QMainWindow):
 
 def main():
     """应用程序主入口"""
+    # 添加源代码目录到Python路径
+    src_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, src_path)
+    
     # 创建Qt应用
     app = QApplication(sys.argv)
     app.setApplicationName("GeekFanatic")
