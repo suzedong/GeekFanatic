@@ -2,8 +2,10 @@
 窗口管理系统实现
 """
 from typing import Dict, List, Optional
+
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QMainWindow
+
 
 class WindowManager(QObject):
     """窗口管理器"""

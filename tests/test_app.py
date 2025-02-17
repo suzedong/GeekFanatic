@@ -4,9 +4,10 @@
 import pytest
 
 from geek_fanatic import GeekFanatic
+from geek_fanatic.core.plugin import PluginManager
 from geek_fanatic.core.theme import ThemeManager
 from geek_fanatic.core.window import WindowManager
-from geek_fanatic.core.plugin import PluginManager
+
 
 @pytest.fixture
 def app():

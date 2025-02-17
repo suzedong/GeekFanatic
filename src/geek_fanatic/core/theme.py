@@ -2,7 +2,9 @@
 主题系统实现
 """
 from typing import Dict, Optional
+
 from PySide6.QtCore import QObject
+
 
 class ThemeManager(QObject):
     """主题管理器"""

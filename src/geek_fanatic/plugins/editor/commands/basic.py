@@ -3,6 +3,7 @@
 """
 from geek_fanatic.core.command import Command
 
+
 class DeleteCommand(Command):
     def __init__(self):
         super().__init__("editor.delete", "删除选中内容")

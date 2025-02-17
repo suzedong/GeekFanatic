@@ -1,14 +1,15 @@
 """
 语法高亮功能实现
 """
+import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Pattern, Tuple
-import re
 
 from PySide6.QtCore import QObject, Signal
-from PySide6.QtGui import QTextCharFormat, QColor
+from PySide6.QtGui import QColor, QTextCharFormat
 
 from geek_fanatic.plugins.editor.features import EditorFeature
+
 
 @dataclass
 class TokenType:

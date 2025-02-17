@@ -2,9 +2,11 @@
 视图系统实现
 """
 from enum import Enum
-from typing import Dict, List, Union, Any
-from PySide6.QtWidgets import QWidget
+from typing import Any, Dict, List, Union
+
 from PySide6.QtCore import QObject
+from PySide6.QtWidgets import QWidget
+
 
 class ViewType(str, Enum):
     """视图类型"""

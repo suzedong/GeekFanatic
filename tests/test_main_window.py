@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QApplication, QLabel
 
 from geek_fanatic.ui.main_window import MainWindow
 
+
 @pytest.fixture
 def app(qapp):
     """提供Qt应用程序实例"""

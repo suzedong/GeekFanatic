@@ -1,13 +1,20 @@
 """
 通用对话框实现
 """
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
-from PySide6.QtWidgets import (
-    QDialog, QFileDialog, QVBoxLayout, QHBoxLayout,
-    QPushButton, QLabel, QLineEdit, QDialogButtonBox
-)
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+)
+
 
 class FileDialogs:
     """文件对话框静态方法集合"""

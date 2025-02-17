@@ -8,6 +8,7 @@ from PySide6.QtCore import QObject, Signal
 
 from geek_fanatic.plugins.editor.types import Position
 
+
 @dataclass
 class TextOperation:
     """文本操作基类"""

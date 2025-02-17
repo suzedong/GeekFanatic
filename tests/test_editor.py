@@ -5,23 +5,24 @@ import pytest
 from PySide6.QtCore import QObject
 
 from geek_fanatic.core.command import CommandRegistry
-from geek_fanatic.plugins.editor.editor import Editor
 from geek_fanatic.plugins.editor.buffer import TextBuffer
-from geek_fanatic.plugins.editor.types import Position
 from geek_fanatic.plugins.editor.commands.basic import (
     DeleteCommand,
-    UndoCommand,
     RedoCommand,
-    SelectAllCommand
+    SelectAllCommand,
+    UndoCommand,
 )
 from geek_fanatic.plugins.editor.commands.search import (
     FindCommand,
+    ReplaceAllCommand,
     ReplaceCommand,
-    ReplaceAllCommand
 )
+from geek_fanatic.plugins.editor.editor import Editor
 from geek_fanatic.plugins.editor.features.folding import CodeFolding
 from geek_fanatic.plugins.editor.features.highlight import SyntaxHighlight
 from geek_fanatic.plugins.editor.features.indent import CodeIndent
+from geek_fanatic.plugins.editor.types import Position
+
 
 class MockGeekFanatic:
     """模拟的 GeekFanatic 实例"""

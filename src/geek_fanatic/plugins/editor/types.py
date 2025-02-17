@@ -3,6 +3,7 @@
 """
 from dataclasses import dataclass
 
+
 @dataclass
 class Position:
     """文本位置"""

@@ -1,14 +1,15 @@
 """
 插件系统核心实现
 """
-import os
 import importlib.util
 import logging
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional, Type
 
 from PySide6.QtCore import QObject
+
 
 class Plugin(ABC):
     """插件基类"""

@@ -1,12 +1,20 @@
 """
 编辑器小部件实现
 """
-from PySide6.QtWidgets import QPlainTextEdit, QWidget, QVBoxLayout
-from PySide6.QtCore import Qt, Signal, QRect
+from PySide6.QtCore import QRect, Qt, Signal
 from PySide6.QtGui import (
-    QTextCursor, QPainter, QColor, QPen, QTextFormat,
-    QKeyEvent, QSyntaxHighlighter, QTextCharFormat, QFont
+    QColor,
+    QFont,
+    QKeyEvent,
+    QPainter,
+    QPen,
+    QSyntaxHighlighter,
+    QTextCharFormat,
+    QTextCursor,
+    QTextFormat,
 )
+from PySide6.QtWidgets import QPlainTextEdit, QVBoxLayout, QWidget
+
 
 class Editor(QPlainTextEdit):
     """编辑器控件"""

@@ -2,7 +2,9 @@
 配置系统实现
 """
 from typing import Any, Dict, Optional
+
 from PySide6.QtCore import QObject
+
 
 class ConfigRegistry(QObject):
     """配置注册表"""

@@ -7,6 +7,7 @@ from PySide6.QtCore import QObject
 from PySide6.QtQml import qmlRegisterType
 
 from geek_fanatic.core.plugin import Plugin
+
 from .editor import Editor
 
 
@@ -45,7 +46,7 @@ class EditorPlugin(Plugin):
         
     def _register_commands(self) -> None:
         """注册编辑器命令"""
-        from .commands.basic import DeleteCommand, UndoCommand, RedoCommand
+        from .commands.basic import DeleteCommand, RedoCommand, UndoCommand
         from .commands.search import FindCommand, ReplaceCommand
         
         self._ide.command_registry.register(DeleteCommand())

@@ -1,14 +1,15 @@
 """
 代码缩进功能实现
 """
+import re
 from dataclasses import dataclass
 from typing import List, Optional, Pattern
-import re
 
 from PySide6.QtCore import QObject, Signal
 
-from geek_fanatic.plugins.editor.types import Position
 from geek_fanatic.plugins.editor.features import EditorFeature
+from geek_fanatic.plugins.editor.types import Position
+
 
 @dataclass
 class IndentRule:

@@ -4,6 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
+
 class Command(ABC):
     """命令基类"""
     

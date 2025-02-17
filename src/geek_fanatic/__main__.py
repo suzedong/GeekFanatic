@@ -10,17 +10,31 @@ project_root = str(Path(__file__).parent.parent.parent)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
+from PySide6.QtCore import QDir, Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
+    QApplication,
+    QDockWidget,
+    QFileSystemModel,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
+    QMenuBar,
+    QPushButton,
+    QSplitter,
+    QStatusBar,
+    QTextEdit,
+    QToolBar,
+    QTreeView,
+    QVBoxLayout,
+    QWidget,
+)
+
 # 使用显式的包导入路径
 from geek_fanatic.core.app import GeekFanatic
 from geek_fanatic.plugins.editor.editor import Editor
 
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget,
-    QHBoxLayout, QSplitter, QTextEdit, QTreeView, QDockWidget, QMenuBar,
-    QStatusBar, QToolBar, QFrame, QFileSystemModel
-)
-from PySide6.QtCore import Qt, QDir
-from PySide6.QtGui import QAction
 
 class MainWindow(QMainWindow):
     """主窗口"""

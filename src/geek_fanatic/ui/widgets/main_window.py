@@ -3,16 +3,27 @@
 """
 from typing import Optional
 
-from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QSplitter, QTreeView, QStatusBar, QToolBar,
-    QMenuBar, QMenu, QFileSystemModel, QFrame
-)
-from PySide6.QtCore import Qt, QDir, Signal
+from PySide6.QtCore import QDir, Qt, Signal
 from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (
+    QFileSystemModel,
+    QFrame,
+    QHBoxLayout,
+    QMainWindow,
+    QMenu,
+    QMenuBar,
+    QSplitter,
+    QStatusBar,
+    QToolBar,
+    QTreeView,
+    QVBoxLayout,
+    QWidget,
+)
 
 from geek_fanatic.plugins.editor.ui.widgets.editor import Editor
+
 from .dialogs import FileDialogs, FindReplaceDialog, SettingsDialog
+
 
 class MainWindow(QMainWindow):
     """主窗口"""

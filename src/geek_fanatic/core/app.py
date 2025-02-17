@@ -1,18 +1,19 @@
 """
 GeekFanatic 核心应用模块
 """
-from typing import Dict, List, Optional, Type
 from pathlib import Path
+from typing import Dict, List, Optional, Type
 
 from PySide6.QtCore import QObject, Signal, Slot
 from PySide6.QtQml import QQmlComponent
 
-from geek_fanatic.core.plugin import Plugin, PluginManager
-from geek_fanatic.core.theme import ThemeManager
-from geek_fanatic.core.window import WindowManager
 from geek_fanatic.core.command import CommandRegistry
 from geek_fanatic.core.config import ConfigRegistry
+from geek_fanatic.core.plugin import Plugin, PluginManager
+from geek_fanatic.core.theme import ThemeManager
 from geek_fanatic.core.view import ViewRegistry, ViewType
+from geek_fanatic.core.window import WindowManager
+
 
 class GeekFanatic(QObject):
     """核心类，管理整个应用程序的生命周期和核心功能"""
