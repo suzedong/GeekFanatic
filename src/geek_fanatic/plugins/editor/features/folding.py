@@ -6,11 +6,8 @@ import re
 from dataclasses import dataclass
 from typing import List, Optional
 
-from PySide6.QtCore import QObject, Signal
-
+from geek_fanatic.plugins.editor.editor import Editor  # 导入 Editor 类型
 from geek_fanatic.plugins.editor.features import EditorFeature
-from geek_fanatic.plugins.editor.types import Position
-
 
 @dataclass
 class FoldRegion:
@@ -20,11 +17,10 @@ class FoldRegion:
     end_line: int
     is_folded: bool = False
 
-
 class CodeFolding(EditorFeature):
     """代码折叠功能实现"""
 
-    def __init__(self, editor: "Editor") -> None:
+    def __init__(self, editor: Editor) -> None:
         """初始化代码折叠"""
         super().__init__(editor)
         self._folded_regions: List[FoldRegion] = []
@@ -33,7 +29,7 @@ class CodeFolding(EditorFeature):
     def initialize(self) -> None:
         """初始化功能"""
         # 连接文本改变信号，重新计算折叠区域
-        self._editor.contentChanged.connect(self.compute_folds)
+        self._editor.textChanged.connect(self.compute_folds)
 
     def cleanup(self) -> None:
         """清理功能"""
@@ -42,7 +38,7 @@ class CodeFolding(EditorFeature):
     def compute_folds(self) -> None:
         """计算可折叠区域"""
         self._folded_regions.clear()
-        content = self._editor.content
+        content = self._editor.toPlainText()
         if not content:
             return
 
@@ -113,7 +109,7 @@ class CodeFolding(EditorFeature):
 
     def get_visible_line_count(self) -> int:
         """获取可见行数（考虑折叠）"""
-        total_lines = len(self._editor.content.split("\n"))
+        total_lines = len(self._editor.toPlainText().split("\n"))
         hidden_lines = 0
 
         for region in self._folded_regions:
@@ -128,7 +124,7 @@ class CodeFolding(EditorFeature):
 
     def get_fold_level(self, line: int) -> int:
         """获取指定行的折叠级别（缩进级别）"""
-        text = self._editor._buffer.get_line(line)
+        text = self._editor.document().findBlockByLineNumber(line).text()
         match = self._indentation_pattern.match(text)
         if match:
             return len(match.group(1))

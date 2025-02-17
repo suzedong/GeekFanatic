@@ -47,6 +47,9 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 check_untyped_defs = true
+exclude = [
+    "src/geek_fanatic/resources/resources_rc.py"
+]
 
 [tool.pylint]
 max-line-length = 88

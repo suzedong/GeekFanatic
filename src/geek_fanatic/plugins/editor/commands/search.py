@@ -6,16 +6,16 @@ from geek_fanatic.core.command import Command
 
 
 class FindCommand(Command):
-    def __init__(self):
-        super().__init__("editor.find", "查找")
+    def __init__(self) -> None:
+        super().__init__(id="editor.find", description="查找")
 
-    def execute(self):
+    def execute(self) -> None:
         pass
 
 
 class ReplaceCommand(Command):
-    def __init__(self):
-        super().__init__("editor.replace", "替换")
+    def __init__(self) -> None:
+        super().__init__(id="editor.replace", description="替换")
 
-    def execute(self):
+    def execute(self) -> None:
         pass

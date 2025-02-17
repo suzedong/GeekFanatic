@@ -23,7 +23,9 @@ class Command(ABC):
 class CommandRegistry:
     """命令注册表"""
 
-    def __init__(self):
+    _commands: Dict[str, Command]
+
+    def __init__(self) -> None:
         """初始化命令注册表"""
         self._commands: Dict[str, Command] = {}
 
