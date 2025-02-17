@@ -2,16 +2,14 @@
 GeekFanatic IDE 主入口
 """
 
+# pylint: disable=no-name-in-module
 import os
 import sys
 from pathlib import Path
-
-# 添加项目根目录到Python路径
-project_root = str(Path(__file__).parent.parent.parent)
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+from typing import Optional
 
 from PySide6.QtCore import QDir, Qt
+from PySide6.QtCore import QModelIndex as QtModelIndex
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QApplication,
@@ -32,17 +30,26 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+# 添加项目根目录到Python路径
+project_root = str(Path(__file__).parent.parent.parent)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 # 使用显式的包导入路径
 from geek_fanatic.core.app import GeekFanatic
 from geek_fanatic.plugins.editor.editor import Editor
-
+# pylint: enable=no-name-in-module
 
 class MainWindow(QMainWindow):
     """主窗口"""
 
-    def __init__(self, ide):
+    def __init__(self, ide: GeekFanatic) -> None:
         super().__init__()
         self.ide = ide
+        self._status_bar = QStatusBar(self)
+        super().setStatusBar(self._status_bar)
+        self._status_bar.showMessage("Ready")
+        
         self.setWindowTitle("GeekFanatic")
         self.setGeometry(100, 100, 1200, 800)
 
@@ -50,18 +57,13 @@ class MainWindow(QMainWindow):
         self._setup_styles()
         self._connect_signals()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         """设置界面"""
         # 创建菜单栏
         self._create_menu_bar()
 
         # 创建工具栏
         self._create_tool_bar()
-
-        # 创建状态栏
-        self.statusBar = QStatusBar()
-        self.setStatusBar(self.statusBar)
-        self.statusBar.showMessage("Ready")
 
         # 创建中央部件
         central_widget = QWidget()
@@ -73,7 +75,7 @@ class MainWindow(QMainWindow):
         main_layout.setSpacing(0)
 
         # 创建分割器
-        splitter = QSplitter(Qt.Horizontal)
+        splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)
 
         # 创建左侧导航面板
@@ -110,7 +112,7 @@ class MainWindow(QMainWindow):
         splitter.setStretchFactor(0, 1)  # 导航面板
         splitter.setStretchFactor(1, 4)  # 编辑区域
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """创建菜单栏"""
         menubar = self.menuBar()
 
@@ -156,7 +158,7 @@ class MainWindow(QMainWindow):
         self.about_action = QAction("About", self)
         help_menu.addAction(self.about_action)
 
-    def _create_tool_bar(self):
+    def _create_tool_bar(self) -> None:
         """创建工具栏"""
         toolbar = QToolBar()
         self.addToolBar(toolbar)
@@ -172,7 +174,7 @@ class MainWindow(QMainWindow):
         self.debug_action = QAction("Debug", self)
         toolbar.addAction(self.debug_action)
 
-    def _connect_signals(self):
+    def _connect_signals(self) -> None:
         """连接信号"""
         # 文件树
         self.file_tree.clicked.connect(self._on_file_clicked)
@@ -186,7 +188,7 @@ class MainWindow(QMainWindow):
         self.save_action.triggered.connect(self._on_save)
         self.exit_action.triggered.connect(self.close)
 
-    def _setup_styles(self):
+    def _setup_styles(self) -> None:
         """设置样式"""
         self.setStyleSheet(
             """
@@ -238,7 +240,7 @@ class MainWindow(QMainWindow):
         """
         )
 
-    def _on_file_clicked(self, index):
+    def _on_file_clicked(self, index: QtModelIndex) -> None:
         """处理文件点击"""
         file_path = self.file_model.filePath(index)
         if os.path.isfile(file_path):
@@ -246,29 +248,28 @@ class MainWindow(QMainWindow):
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
                 self.editor.setPlainText(content)
-                self.statusBar.showMessage(f"Loaded: {file_path}")
+                self._status_bar.showMessage(f"Loaded: {file_path}")
             except Exception as e:
-                self.statusBar.showMessage(f"Error loading file: {str(e)}")
+                self._status_bar.showMessage(f"Error loading file: {str(e)}")
 
-    def _on_cursor_position_changed(self, line: int, column: int):
+    def _on_cursor_position_changed(self, line: int, column: int) -> None:
         """处理光标位置变化"""
-        self.statusBar.showMessage(f"Line: {line}, Column: {column}")
+        self._status_bar.showMessage(f"Line: {line}, Column: {column}")
 
-    def _on_new(self):
+    def _on_new(self) -> None:
         """新建文件"""
         self.editor.clear()
-        self.statusBar.showMessage("New file created")
+        self._status_bar.showMessage("New file created")
 
-    def _on_open(self):
+    def _on_open(self) -> None:
         """打开文件"""
-        self.statusBar.showMessage("Open file...")
+        self._status_bar.showMessage("Open file...")
 
-    def _on_save(self):
+    def _on_save(self) -> None:
         """保存文件"""
-        self.statusBar.showMessage("File saved")
+        self._status_bar.showMessage("File saved")
 
-
-def main():
+def main() -> int:
     """应用程序主入口"""
     # 添加源代码目录到Python路径
     src_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -299,7 +300,6 @@ def main():
 
         traceback.print_exc()
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())
