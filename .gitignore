@@ -4,50 +4,124 @@ __pycache__/
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Python Testing
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
+*.cover
 htmlcov/
+.tox/
+nosetests.xml
 
-# 虚拟环境
+# Python Type Checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Virtual Environment
 .venv/
 venv/
 ENV/
+env/
+pythonenv*/
 
 # IDE
 .vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
+*.code-workspace
+.settings/
+*.iml
 
 # Qt
 *.qmlc
 *.jsc
 *.qrc.depends
+*_rc.py
 qrc_*.py
+resources_rc.py
+*_resources.py
 *.qm
+*.rcc
+*.autosave
+.qmake.stache
+moc_*.cpp
+moc_*.h
+ui_*.py
+ui_*.h
 
 # Poetry
 dist/
 build/
 *.egg-info/
+poetry.lock.dev
 
-# 操作系统
+# Operating System
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 *.swp
 *~
+Desktop.ini
+$RECYCLE.BIN/
 
-# 日志和数据文件
+# Logs and Databases
 *.log
+logs/
 *.sqlite
 *.db
+*.db-shm
+*.db-wal
 
-# 本地配置
+# Local Configuration
 .env
 .env.local
 .env.*
+!.env.example
+config.local.ini
+*.local.yml
+*.local.yaml
+*.local.json
 
-# 其他
+# Editor Specific
+.ropeproject/
+.project
+.classpath
+.c9/
+*.launch
+*.tmproj
+*.esproj
+*.sublime-workspace
+
+# Cache and Temp
 .cache/
 tmp/
 temp/
+*.tmp
+*.bak
+*.swp
+
+# Application Specific
+.qt_for_python/
+.ruff_cache/
+.sass-cache/
+node_modules/

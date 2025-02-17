@@ -6,438 +6,444 @@
 from PySide6 import QtCore
 
 qt_resource_data = b"\
-\x00\x00\x00\xd4\
+\x00\x00\x00\xd8\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M6.5 \
-13.5l-4-4 4-4 .7\
-.7-3.3 3.3 3.3 3\
-.3-.7.7z\x22/>\x0a</sv\
-g>\x0a\
-\x00\x00\x00\xc3\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M6.\
+5 13.5l-4-4 4-4 \
+.7.7-3.3 3.3 3.3\
+ 3.3-.7.7z\x22/>\x0d\x0a<\
+/svg>\x0d\x0a\
+\x00\x00\x00\xc7\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M3 3v\
-10h10V3H3zm9 9H4\
-V4h8v8z\x22/>\x0a</svg\
->\x0a\
-\x00\x00\x00\xdd\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 1l\
-7 14H1L8 1zm-.8 \
-13h1.6v-1H7.2v1z\
-m0-3h1.6V6H7.2v5\
-z\x22/>\x0a</svg>\x0a\
-\x00\x00\x00\xd2\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M9.5 \
-13.5l4-4-4-4-.7.\
-7 3.3 3.3-3.3 3.\
-3.7.7z\x22/>\x0a</svg>\
-\x0a\
-\x00\x00\x00\xd4\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M13 4\
-H3V3h10v1zM3 8h1\
-0V7H3v1zm10 4H3v\
--1h10v1z\x22/>\x0a</sv\
-g>\x0a\
-\x00\x00\x01\x11\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M14.5\
- 3H7.71l-.85-.85\
-L6.51 2h-5l-.5.5\
-v11l.5.5h13l.5-.\
-5v-10L14.5 3zm-.\
-51 11H2V3h4.51l.\
-85.85L7.71 4h6.2\
-8v10z\x22/>\x0a</svg>\x0a\
-\
-\x00\x00\x01D\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 13\
-c2.8 0 5-2.2 5-5\
-s-2.2-5-5-5-5 2.\
-2-5 5 2.2 5 5 5z\
-m0 1c-3.3 0-6-2.\
-7-6-6s2.7-6 6-6 \
-6 2.7 6 6-2.7 6-\
-6 6z\x22/>\x0a    <pat\
-h d=\x22M8 4.5v7\x22/>\
-\x0a    <path d=\x22M1\
-1.5 8h-7\x22/>\x0a</sv\
-g>\x0a\
-\x00\x00\x01\x9d\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 1a\
-7 7 0 1 0 0 14A7\
- 7 0 0 0 8 1zm0 \
-12.5a5.5 5.5 0 1\
- 1 0-11 5.5 5.5 \
-0 0 1 0 11z\x22/>\x0a \
-   <path d=\x22M8 3\
-.5a4.5 4.5 0 0 0\
--2.25 8.4l1.13-1\
-.13A2.5 2.5 0 0 \
-1 8 5.5V3.5z\x22/>\x0a\
-    <path d=\x22M9.\
-12 5.23A2.5 2.5 \
-0 0 1 8 10.5v2a4\
-.5 4.5 0 0 0 2.2\
-5-8.4l-1.13 1.13\
-z\x22/>\x0a</svg>\x0a\
-\x00\x00\x00\xc6\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M14 3\
-v10H2V3h12zm-1 9\
-V4H3v8h10z\x22/>\x0a</\
-svg>\x0a\
-\x00\x00\x01\x10\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M1.5 \
-14h13l.5-.5V3.5l\
--.5-.5H7.71l-.85\
--.85L6.51 2h-5l-\
-.5.5v11l.5.5zm6.\
-21-11h6.28v10H2V\
-3h4.51l.85.85.35\
-.15z\x22/>\x0a</svg>\x0a\
-\x00\x00\x00\xf5\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 1a\
-7 7 0 100 14A7 7\
- 0 008 1zm.9 10.\
-9H7.1V7.1h1.8v4.\
-8zm0-6.6H7.1V4.1\
-h1.8v1.2z\x22/>\x0a</s\
-vg>\x0a\
-\x00\x00\x01\x08\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M13.5\
- 4h-1.75l-1-1h-5\
-.5l-1 1H2.5l-.5.\
-5v9l.5.5h11l.5-.\
-5v-9l-.5-.5zM13 \
-13H3V5h2.1l1-1h3\
-.8l1 1H13v8z\x22/>\x0a\
-</svg>\x0a\
-\x00\x00\x00\xf3\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M7.56\
- 1l.94.94 4.5 4.\
-5-4.5 4.5-.94.94\
-V1zm1.06 2.06v8.\
-88l3.44-3.44L8.6\
-2 3.06z\x22/>\x0a</svg\
->\x0a\
-\x00\x00\x00\xf3\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M13.7\
-1 4.29l-4-4L9 1H\
-4L3 2v12l1 1h9l1\
--1V5l-.29-.71zM1\
-3 14H4V2h4.59l4 \
-4H13v8z\x22/>\x0a</svg\
->\x0a\
-\x00\x00\x00\xe3\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M14 1\
-v14H2V1h12zM13 2\
-H3v12h10V2z\x22/>\x0a \
-   <path d=\x22M7 4\
-h2v2H7z\x22/>\x0a</svg\
->\x0a\
-\x00\x00\x00\xb6\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M14 8\
-v1H3V8h11z\x22/>\x0a</\
-svg>\x0a\
-\x00\x00\x010\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2224\x22 height=\x2224\
-\x22 viewBox=\x220 0 2\
-4 24\x22 fill=\x22none\
-\x22 xmlns=\x22http://\
-www.w3.org/2000/\
-svg\x22>\x0a    <path \
-d=\x22M15.5 14h-.79\
-l-.28-.27a6.5 6.\
-5 0 1 0-.7.7l.27\
-.28v.79l5 4.99L2\
-0.49 19l-4.99-5z\
-m-6 0A4.5 4.5 0 \
-1 1 14 9.5 4.5 4\
-.5 0 0 1 9.5 14z\
-\x22 fill=\x22currentC\
-olor\x22/>\x0a</svg>\x0a\
-\x00\x00\x01\x0b\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M14 2\
-H2L1 3v10l1 1h12\
-l1-1V3l-1-1zm0 1\
-1H2V4h12v9z\x22/>\x0a \
-   <path d=\x22M3 5\
-h10v1H3zm0 2h10v\
-1H3zm0 2h6v1H3z\x22\
-/>\x0a</svg>\x0a\
-\x00\x00\x00\xea\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M3 5v\
-9h9V5H3zm8 8H4V6\
-h7v7z\x22/>\x0a    <pa\
-th d=\x22M5 5h1V4h7\
-v7h-1v1h2V3H5z\x22/\
->\x0a</svg>\x0a\
-\x00\x00\x00\xff\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 9a\
-1 1 0 100-2 1 1 \
-0 000 2zm-3 0a1 \
-1 0 100-2 1 1 0 \
-000 2zm6 0a1 1 0\
- 100-2 1 1 0 000\
- 2z\x22/>\x0a</svg>\x0a\
-\x00\x00\x00\xf6\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M13 1\
-H7L6 2H3v1h11V2l\
--1-1zM3 4v9c0 .6\
-.5 1 1 1h8c.6 0 \
-1-.5 1-1V4H3zm9 \
-8H4V5h8v7z\x22/>\x0a</\
-svg>\x0a\
-\x00\x00\x00\xfc\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2224\x22 height=\x2224\
-\x22 viewBox=\x220 0 2\
-4 24\x22 fill=\x22none\
-\x22 xmlns=\x22http://\
-www.w3.org/2000/\
-svg\x22>\x0a    <path \
-d=\x22M3 3h18v18H3V\
-3zm2 2v14h14V5H5\
-zm2 2h10v2H7V7zm\
-0 4h10v2H7v-2zm0\
- 4h6v2H7v-2z\x22 fi\
-ll=\x22currentColor\
-\x22/>\x0a</svg>\x0a\
-\x00\x00\x00\xdd\
-<\
-?xml version=\x221.\
-0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M8 1l\
-7 14H1L8 1zm-.8 \
-13h1.6v-1H7.2v1z\
-m0-3h1.6V6H7.2v5\
-z\x22/>\x0a</svg>\x0a\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M3 \
+3v10h10V3H3zm9 9\
+H4V4h8v8z\x22/>\x0d\x0a</\
+svg>\x0d\x0a\
 \x00\x00\x00\xe1\
 <\
 ?xml version=\x221.\
 0\x22 encoding=\x22UTF\
--8\x22?>\x0a<svg width\
-=\x2216\x22 height=\x2216\
-\x22 viewBox=\x220 0 1\
-6 16\x22 xmlns=\x22htt\
-p://www.w3.org/2\
-000/svg\x22 fill=\x22c\
-urrentColor\x22>\x0a  \
-  <path d=\x22M13.9\
- 4.6l-1.1-1.1L7 \
-9.2 4.2 6.5 3.1 \
-7.6l3.9 3.9.9-.9\
- 6-6z\x22/>\x0a</svg>\x0a\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+1l7 14H1L8 1zm-.\
+8 13h1.6v-1H7.2v\
+1zm0-3h1.6V6H7.2\
+v5z\x22/>\x0d\x0a</svg>\x0d\x0a\
 \
+\x00\x00\x00\xd6\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M9.\
+5 13.5l4-4-4-4-.\
+7.7 3.3 3.3-3.3 \
+3.3.7.7z\x22/>\x0d\x0a</s\
+vg>\x0d\x0a\
+\x00\x00\x00\xd8\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M13\
+ 4H3V3h10v1zM3 8\
+h10V7H3v1zm10 4H\
+3v-1h10v1z\x22/>\x0d\x0a<\
+/svg>\x0d\x0a\
+\x00\x00\x01\x15\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M14\
+.5 3H7.71l-.85-.\
+85L6.51 2h-5l-.5\
+.5v11l.5.5h13l.5\
+-.5v-10L14.5 3zm\
+-.51 11H2V3h4.51\
+l.85.85L7.71 4h6\
+.28v10z\x22/>\x0d\x0a</sv\
+g>\x0d\x0a\
+\x00\x00\x01J\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+13c2.8 0 5-2.2 5\
+-5s-2.2-5-5-5-5 \
+2.2-5 5 2.2 5 5 \
+5zm0 1c-3.3 0-6-\
+2.7-6-6s2.7-6 6-\
+6 6 2.7 6 6-2.7 \
+6-6 6z\x22/>\x0d\x0a    <\
+path d=\x22M8 4.5v7\
+\x22/>\x0d\x0a    <path d\
+=\x22M11.5 8h-7\x22/>\x0d\
+\x0a</svg>\x0d\x0a\
+\x00\x00\x01\xa3\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+1a7 7 0 1 0 0 14\
+A7 7 0 0 0 8 1zm\
+0 12.5a5.5 5.5 0\
+ 1 1 0-11 5.5 5.\
+5 0 0 1 0 11z\x22/>\
+\x0d\x0a    <path d=\x22M\
+8 3.5a4.5 4.5 0 \
+0 0-2.25 8.4l1.1\
+3-1.13A2.5 2.5 0\
+ 0 1 8 5.5V3.5z\x22\
+/>\x0d\x0a    <path d=\
+\x22M9.12 5.23A2.5 \
+2.5 0 0 1 8 10.5\
+v2a4.5 4.5 0 0 0\
+ 2.25-8.4l-1.13 \
+1.13z\x22/>\x0d\x0a</svg>\
+\x0d\x0a\
+\x00\x00\x00\xca\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M14\
+ 3v10H2V3h12zm-1\
+ 9V4H3v8h10z\x22/>\x0d\
+\x0a</svg>\x0d\x0a\
+\x00\x00\x01\x14\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M1.\
+5 14h13l.5-.5V3.\
+5l-.5-.5H7.71l-.\
+85-.85L6.51 2h-5\
+l-.5.5v11l.5.5zm\
+6.21-11h6.28v10H\
+2V3h4.51l.85.85.\
+35.15z\x22/>\x0d\x0a</svg\
+>\x0d\x0a\
+\x00\x00\x00\xf9\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+1a7 7 0 100 14A7\
+ 7 0 008 1zm.9 1\
+0.9H7.1V7.1h1.8v\
+4.8zm0-6.6H7.1V4\
+.1h1.8v1.2z\x22/>\x0d\x0a\
+</svg>\x0d\x0a\
+\x00\x00\x01\x0c\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M13\
+.5 4h-1.75l-1-1h\
+-5.5l-1 1H2.5l-.\
+5.5v9l.5.5h11l.5\
+-.5v-9l-.5-.5zM1\
+3 13H3V5h2.1l1-1\
+h3.8l1 1H13v8z\x22/\
+>\x0d\x0a</svg>\x0d\x0a\
+\x00\x00\x00\xf7\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M7.\
+56 1l.94.94 4.5 \
+4.5-4.5 4.5-.94.\
+94V1zm1.06 2.06v\
+8.88l3.44-3.44L8\
+.62 3.06z\x22/>\x0d\x0a</\
+svg>\x0d\x0a\
+\x00\x00\x00\xf7\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M13\
+.71 4.29l-4-4L9 \
+1H4L3 2v12l1 1h9\
+l1-1V5l-.29-.71z\
+M13 14H4V2h4.59l\
+4 4H13v8z\x22/>\x0d\x0a</\
+svg>\x0d\x0a\
+\x00\x00\x00\xe8\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M14\
+ 1v14H2V1h12zM13\
+ 2H3v12h10V2z\x22/>\
+\x0d\x0a    <path d=\x22M\
+7 4h2v2H7z\x22/>\x0d\x0a<\
+/svg>\x0d\x0a\
+\x00\x00\x00\xba\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M14\
+ 8v1H3V8h11z\x22/>\x0d\
+\x0a</svg>\x0d\x0a\
+\x00\x00\x014\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2224\x22 height=\x222\
+4\x22 viewBox=\x220 0 \
+24 24\x22 fill=\x22non\
+e\x22 xmlns=\x22http:/\
+/www.w3.org/2000\
+/svg\x22>\x0d\x0a    <pat\
+h d=\x22M15.5 14h-.\
+79l-.28-.27a6.5 \
+6.5 0 1 0-.7.7l.\
+27.28v.79l5 4.99\
+L20.49 19l-4.99-\
+5zm-6 0A4.5 4.5 \
+0 1 1 14 9.5 4.5\
+ 4.5 0 0 1 9.5 1\
+4z\x22 fill=\x22curren\
+tColor\x22/>\x0d\x0a</svg\
+>\x0d\x0a\
+\x00\x00\x01\x10\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M14\
+ 2H2L1 3v10l1 1h\
+12l1-1V3l-1-1zm0\
+ 11H2V4h12v9z\x22/>\
+\x0d\x0a    <path d=\x22M\
+3 5h10v1H3zm0 2h\
+10v1H3zm0 2h6v1H\
+3z\x22/>\x0d\x0a</svg>\x0d\x0a\
+\x00\x00\x00\xef\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M3 \
+5v9h9V5H3zm8 8H4\
+V6h7v7z\x22/>\x0d\x0a    \
+<path d=\x22M5 5h1V\
+4h7v7h-1v1h2V3H5\
+z\x22/>\x0d\x0a</svg>\x0d\x0a\
+\x00\x00\x01\x03\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+9a1 1 0 100-2 1 \
+1 0 000 2zm-3 0a\
+1 1 0 100-2 1 1 \
+0 000 2zm6 0a1 1\
+ 0 100-2 1 1 0 0\
+00 2z\x22/>\x0d\x0a</svg>\
+\x0d\x0a\
+\x00\x00\x00\xfa\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M13\
+ 1H7L6 2H3v1h11V\
+2l-1-1zM3 4v9c0 \
+.6.5 1 1 1h8c.6 \
+0 1-.5 1-1V4H3zm\
+9 8H4V5h8v7z\x22/>\x0d\
+\x0a</svg>\x0d\x0a\
+\x00\x00\x01\x00\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2224\x22 height=\x222\
+4\x22 viewBox=\x220 0 \
+24 24\x22 fill=\x22non\
+e\x22 xmlns=\x22http:/\
+/www.w3.org/2000\
+/svg\x22>\x0d\x0a    <pat\
+h d=\x22M3 3h18v18H\
+3V3zm2 2v14h14V5\
+H5zm2 2h10v2H7V7\
+zm0 4h10v2H7v-2z\
+m0 4h6v2H7v-2z\x22 \
+fill=\x22currentCol\
+or\x22/>\x0d\x0a</svg>\x0d\x0a\
+\x00\x00\x00\xe1\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M8 \
+1l7 14H1L8 1zm-.\
+8 13h1.6v-1H7.2v\
+1zm0-3h1.6V6H7.2\
+v5z\x22/>\x0d\x0a</svg>\x0d\x0a\
+\
+\x00\x00\x00\xe5\
+<\
+?xml version=\x221.\
+0\x22 encoding=\x22UTF\
+-8\x22?>\x0d\x0a<svg widt\
+h=\x2216\x22 height=\x221\
+6\x22 viewBox=\x220 0 \
+16 16\x22 xmlns=\x22ht\
+tp://www.w3.org/\
+2000/svg\x22 fill=\x22\
+currentColor\x22>\x0d\x0a\
+    <path d=\x22M13\
+.9 4.6l-1.1-1.1L\
+7 9.2 4.2 6.5 3.\
+1 7.6l3.9 3.9.9-\
+.9 6-6z\x22/>\x0d\x0a</sv\
+g>\x0d\x0a\
 "
 
 qt_resource_name = b"\
@@ -549,54 +555,54 @@ qt_resource_struct = b"\
 \x00\x00\x00\x00\x00\x00\x00\x00\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x18\x00\x00\x00\x02\
 \x00\x00\x00\x00\x00\x00\x00\x00\
-\x00\x00\x00r\x00\x00\x00\x00\x00\x01\x00\x00\x03V\
-\x00\x00\x01\x95\x12\xe4\x8c\xb5\
-\x00\x00\x02\x82\x00\x00\x00\x00\x00\x01\x00\x00\x15\xcc\
-\x00\x00\x01\x95\x12\xe6\x94\xc0\
-\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x01\x00\x00\x06\x8b\
-\x00\x00\x01\x95\x12\xe8\xd0\x8a\
-\x00\x00\x00\xfe\x00\x00\x00\x00\x00\x01\x00\x00\x08\xf6\
-\x00\x00\x01\x95\x12\xe5(\x9c\
-\x00\x00\x02B\x00\x00\x00\x00\x00\x01\x00\x00\x13\xd2\
-\x00\x00\x01\x95\x12\xe6\x95\x11\
+\x00\x00\x00r\x00\x00\x00\x00\x00\x01\x00\x00\x03f\
+\x00\x00\x01\x95\x13\x9fi\x8c\
+\x00\x00\x02\x82\x00\x00\x00\x00\x00\x01\x00\x00\x16+\
+\x00\x00\x01\x95\x13\x9fi\x8f\
+\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x01\x00\x00\x06\xa9\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x00\xfe\x00\x00\x00\x00\x00\x01\x00\x00\x09\x1e\
+\x00\x00\x01\x95\x13\x9fi\x8c\
+\x00\x00\x02B\x00\x00\x00\x00\x00\x01\x00\x00\x14)\
+\x00\x00\x01\x95\x13\x9fi\x8d\
 \x00\x00\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x01\x95\x12\xe6\x01\x82\
-\x00\x00\x01\x22\x00\x00\x00\x00\x00\x01\x00\x00\x0a\x0a\
-\x00\x00\x01\x95\x12\xe6\x94\xff\
-\x00\x00\x02d\x00\x00\x00\x00\x00\x01\x00\x00\x14\xcc\
-\x00\x00\x01\x95\x12\xc5ci\
-\x00\x00\x02\x10\x00\x00\x00\x00\x00\x01\x00\x00\x11\xe1\
-\x00\x00\x01\x95\x12\xe6\x94\x81\
-\x00\x00\x02,\x00\x00\x00\x00\x00\x01\x00\x00\x12\xcf\
-\x00\x00\x01\x95\x12\xe6\x95*\
-\x00\x00\x01\x80\x00\x00\x00\x00\x00\x01\x00\x00\x0d\x06\
-\x00\x00\x01\x95\x12\xe5(\xd3\
-\x00\x00\x01b\x00\x00\x00\x00\x00\x01\x00\x00\x0c\x0f\
-\x00\x00\x01\x95\x12\xe6\x01\xd2\
-\x00\x00\x00\xe4\x00\x00\x00\x00\x00\x01\x00\x00\x08,\
-\x00\x00\x01\x95\x12\xe6\x01\xe2\
-\x00\x00\x01\xd8\x00\x00\x00\x00\x00\x01\x00\x00\x0f\x9e\
-\x00\x00\x01\x95\x12\xc5\xd7\x1e\
-\x00\x00\x02\x9e\x00\x00\x00\x00\x00\x01\x00\x00\x16\xad\
-\x00\x00\x01\x95\x12\xe5(\xe8\
-\x00\x00\x00D\x00\x00\x00\x00\x00\x01\x00\x00\x01\x9f\
-\x00\x00\x01\x95\x12\xe6\x94\xa3\
-\x00\x00\x00\x88\x00\x00\x00\x00\x00\x01\x00\x00\x04.\
-\x00\x00\x01\x95\x12\xe5(w\
-\x00\x00\x01\xf2\x00\x00\x00\x00\x00\x01\x00\x00\x10\xd2\
-\x00\x00\x01\x95\x12\xe6\x02\x07\
-\x00\x00\x00\x5c\x00\x00\x00\x00\x00\x01\x00\x00\x02\x80\
-\x00\x00\x01\x95\x12\xe6\x01\x9e\
-\x00\x00\x00\xa2\x00\x00\x00\x00\x00\x01\x00\x00\x05C\
-\x00\x00\x01\x95\x12\xe4\x8c\x9b\
-\x00\x00\x01\x98\x00\x00\x00\x00\x00\x01\x00\x00\x0d\xfd\
-\x00\x00\x01\x95\x12\xe4\x8cl\
-\x00\x00\x00&\x00\x00\x00\x00\x00\x01\x00\x00\x00\xd8\
-\x00\x00\x01\x95\x12\xe6\x94_\
-\x00\x00\x01\xba\x00\x00\x00\x00\x00\x01\x00\x00\x0e\xe4\
-\x00\x00\x01\x95\x12\xe6\x94E\
-\x00\x00\x018\x00\x00\x00\x00\x00\x01\x00\x00\x0b\x03\
-\x00\x00\x01\x95\x12\xe4Gd\
+\x00\x00\x01\x95\x13\x9fi\x8f\
+\x00\x00\x01\x22\x00\x00\x00\x00\x00\x01\x00\x00\x0a6\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x02d\x00\x00\x00\x00\x00\x01\x00\x00\x15'\
+\x00\x00\x01\x95\x13\x9fi\x8b\
+\x00\x00\x02\x10\x00\x00\x00\x00\x00\x01\x00\x00\x12/\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x02,\x00\x00\x00\x00\x00\x01\x00\x00\x13\x22\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x01\x80\x00\x00\x00\x00\x00\x01\x00\x00\x0d>\
+\x00\x00\x01\x95\x13\x9fi\x8b\
+\x00\x00\x01b\x00\x00\x00\x00\x00\x01\x00\x00\x0cC\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x00\xe4\x00\x00\x00\x00\x00\x01\x00\x00\x08P\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x01\xd8\x00\x00\x00\x00\x00\x01\x00\x00\x0f\xe3\
+\x00\x00\x01\x95\x13\x9fi\x8e\
+\x00\x00\x02\x9e\x00\x00\x00\x00\x00\x01\x00\x00\x17\x10\
+\x00\x00\x01\x95\x13\x9fi\x8e\
+\x00\x00\x00D\x00\x00\x00\x00\x00\x01\x00\x00\x01\xa7\
+\x00\x00\x01\x95\x13\x9fi\x8b\
+\x00\x00\x00\x88\x00\x00\x00\x00\x00\x01\x00\x00\x04B\
+\x00\x00\x01\x95\x13\x9fi\x8c\
+\x00\x00\x01\xf2\x00\x00\x00\x00\x00\x01\x00\x00\x11\x1b\
+\x00\x00\x01\x95\x13\x9fi\x8f\
+\x00\x00\x00\x5c\x00\x00\x00\x00\x00\x01\x00\x00\x02\x8c\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x00\xa2\x00\x00\x00\x00\x00\x01\x00\x00\x05[\
+\x00\x00\x01\x95\x13\x9fi\x8e\
+\x00\x00\x01\x98\x00\x00\x00\x00\x00\x01\x00\x00\x0e9\
+\x00\x00\x01\x95\x13\x9fi\x8c\
+\x00\x00\x00&\x00\x00\x00\x00\x00\x01\x00\x00\x00\xdc\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x01\xba\x00\x00\x00\x00\x00\x01\x00\x00\x0f%\
+\x00\x00\x01\x95\x13\x9fi\x8d\
+\x00\x00\x018\x00\x00\x00\x00\x00\x01\x00\x00\x0b3\
+\x00\x00\x01\x95\x13\x9fi\x8f\
 "
 
 def qInitResources():
