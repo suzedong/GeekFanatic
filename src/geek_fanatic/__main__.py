@@ -10,9 +10,9 @@ project_root = str(Path(__file__).parent.parent.parent)
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# 修改为相对导入
-from .core.app import GeekFanatic
-from .plugins.editor.ui.widgets.editor import Editor
+# 使用显式的包导入路径
+from geek_fanatic.core.app import GeekFanatic
+from geek_fanatic.plugins.editor.editor import Editor
 
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget,
@@ -253,7 +253,8 @@ def main():
     """应用程序主入口"""
     # 添加源代码目录到Python路径
     src_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.insert(0, src_path)
+    if src_path not in sys.path:
+        sys.path.insert(0, src_path)
     
     # 创建Qt应用
     app = QApplication(sys.argv)
@@ -271,7 +272,7 @@ def main():
         window = MainWindow(ide)
         window.show()
         
-        return app.exec()
+        return app.exec_()
         
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)

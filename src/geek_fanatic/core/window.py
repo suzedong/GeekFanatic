@@ -1,82 +1,49 @@
 """
-窗口管理器模块
+窗口管理系统实现
 """
-from enum import Enum
-from typing import Dict, Optional
-
-from PySide6.QtCore import QObject, Property, Signal, Slot
-
-class WindowState(Enum):
-    """窗口状态枚举"""
-    NORMAL = "normal"
-    MAXIMIZED = "maximized"
-    MINIMIZED = "minimized"
-    FULLSCREEN = "fullscreen"
+from typing import Dict, List, Optional
+from PySide6.QtCore import QObject
+from PySide6.QtWidgets import QMainWindow
 
 class WindowManager(QObject):
-    """窗口管理器，负责管理窗口状态和布局"""
+    """窗口管理器"""
     
-    # 信号定义
-    stateChanged = Signal(str)  # 窗口状态改变信号
-    layoutChanged = Signal()    # 布局改变信号
-    
-    def __init__(self) -> None:
+    def __init__(self):
         """初始化窗口管理器"""
         super().__init__()
-        self._window_state = WindowState.NORMAL
-        self._layout_config: Dict[str, float] = {
-            "sidebar_width": 300,
-            "panel_height": 200,
-            "editor_tabs_height": 35,
-        }
+        self._windows: Dict[str, QMainWindow] = {}
+        self._active_window: Optional[QMainWindow] = None
+        self._window_state: str = "normal"
         
-    @Property(str)
-    def window_state(self) -> str:
-        """获取当前窗口状态"""
-        return self._window_state.value
+    def register_window(self, window_id: str, window: QMainWindow) -> None:
+        """注册窗口"""
+        self._windows[window_id] = window
         
-    @window_state.setter
-    def window_state(self, state: str) -> None:
+    def unregister_window(self, window_id: str) -> None:
+        """注销窗口"""
+        if window_id in self._windows:
+            del self._windows[window_id]
+            
+    def get_window(self, window_id: str) -> Optional[QMainWindow]:
+        """获取窗口"""
+        return self._windows.get(window_id)
+        
+    def get_active_window(self) -> Optional[QMainWindow]:
+        """获取活动窗口"""
+        return self._active_window
+        
+    def set_active_window(self, window: QMainWindow) -> None:
+        """设置活动窗口"""
+        self._active_window = window
+        
+    def get_window_state(self) -> str:
+        """获取窗口状态"""
+        return self._window_state
+        
+    def set_window_state(self, state: str) -> None:
         """设置窗口状态"""
-        try:
-            new_state = WindowState(state)
-            if new_state != self._window_state:
-                self._window_state = new_state
-                self.stateChanged.emit(state)
-        except ValueError:
-            pass
-            
-    @Slot(str, float)
-    def set_layout_size(self, component: str, size: float) -> None:
-        """设置布局组件大小"""
-        if component in self._layout_config and self._layout_config[component] != size:
-            self._layout_config[component] = size
-            self.layoutChanged.emit()
-            
-    @Slot(str, result=float)
-    def get_layout_size(self, component: str) -> float:
-        """获取布局组件大小"""
-        return self._layout_config.get(component, 0.0)
+        self._window_state = state
         
-    @Slot()
-    def maximize(self) -> None:
-        """最大化窗口"""
-        self.window_state = WindowState.MAXIMIZED.value
-        
-    @Slot()
-    def minimize(self) -> None:
-        """最小化窗口"""
-        self.window_state = WindowState.MINIMIZED.value
-        
-    @Slot()
-    def restore(self) -> None:
-        """还原窗口"""
-        self.window_state = WindowState.NORMAL.value
-        
-    @Slot()
-    def toggle_fullscreen(self) -> None:
-        """切换全屏状态"""
-        if self._window_state == WindowState.FULLSCREEN:
-            self.window_state = WindowState.NORMAL.value
-        else:
-            self.window_state = WindowState.FULLSCREEN.value
+    def get_all_windows(self) -> List[QMainWindow]:
+        """获取所有窗口"""
+        return list(self._windows.values())
