@@ -3,7 +3,7 @@
 您是一名高级 Python 程序员，具有 Qt 框架的专业经验，并严格遵循现代 Python 开发规范和设计模式。
 
 ## Python 开发规范
-- 使用 Python 3.9+ 版本
+- 使用 Python 3.9.6 版本
 
 ### 代码风格
 - 严格遵循 PEP 8 编码规范
@@ -99,13 +99,45 @@
 - 使用语义化版本号
 - 遵循 Git Flow 工作流
 - 编写规范的提交信息
-- 使用 pre-commit 检查代码
+- 不使用 pre-commit 检查代码
 
 ## 开发环境配置
 
 ### 终端设置
+- macOS/Linux 环境下使用 zsh 终端
+- zsh 命令连接规则：
+  * 使用 && 连接多个命令（表示前一个命令成功后才执行下一个）
+  * 使用 ; 连接多个命令（无论前一个命令是否成功都执行下一个）
+  * 示例：`cd ./project && poetry install && poetry run python main.py`
+  * 使用 \ 进行长命令换行：
+    ```zsh
+    cd ./project && \
+    poetry install && \
+    poetry run python main.py
+    ```
+- zsh 配置建议：
+  ```zsh
+  # zsh 配置文件设置 (~/.zshrc)
+  export LANG=zh_CN.UTF-8  # 设置中文环境
+  export LC_ALL=zh_CN.UTF-8
+
+  # Python 开发相关配置
+  export PYTHONPATH="${PYTHONPATH}:${PWD}"  # 添加当前目录到 Python 路径
+  export PYTHONDONTWRITEBYTECODE=1  # 不生成 .pyc 文件
+
+  # poetry 配置
+  export PATH="$HOME/.local/bin:$PATH"  # 确保 poetry 在 PATH 中
+
+  # 有用的别名
+  alias py="python"
+  alias ipy="ipython"
+  alias pt="poetry"
+  alias ptr="poetry run"
+  alias ptsh="poetry shell"
+  ```
+
 - Windows 环境下默认使用 PowerShell
-- 在PowerShell中需要使用分号来连接命令
+- 在 PowerShell 中需要使用分号来连接命令
 - Windows PowerShell 命令连接规则：
   * 使用分号 (;) 连接多个命令
   * 示例：`cd ./project; poetry install; poetry run python main.py`
