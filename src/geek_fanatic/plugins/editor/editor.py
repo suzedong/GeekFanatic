@@ -18,7 +18,9 @@ class Editor(QPlainTextEdit):
     def _setup_editor(self):
         """初始化编辑器"""
         # 设置字体
-        font = QFont("Consolas", 14)
+        font = QFont()
+        font.setFamilies(["Monaco"])
+        font.setPointSize(14)
         font.setFixedPitch(True)
         self.setFont(font)
 

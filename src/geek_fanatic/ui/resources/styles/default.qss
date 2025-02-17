@@ -1,5 +1,10 @@
 /* 默认主题样式 */
 
+/* 全局设置 */
+* {
+    font-family: Monaco;
+}
+
 /* 主窗口 */
 QMainWindow {
     background-color: #1e1e1e;
@@ -70,6 +75,7 @@ QPlainTextEdit {
     selection-background-color: #264f78;
     selection-color: #ffffff;
     border: none;
+    font-family: "SF Mono", Monaco, monospace;
 }
 
 /* 状态栏 */

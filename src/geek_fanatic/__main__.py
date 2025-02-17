@@ -272,7 +272,7 @@ def main():
         window = MainWindow(ide)
         window.show()
         
-        return app.exec_()
+        return app.exec()
         
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
