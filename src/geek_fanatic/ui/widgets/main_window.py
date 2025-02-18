@@ -2,9 +2,15 @@
 主窗口实现
 """
 
-from typing import Optional
+from typing import Optional, Dict, Any, cast
 
-from PySide6.QtCore import QDir, Qt, Signal
+# pylint: disable=no-name-in-module,import-error
+from PySide6.QtCore import (
+    Qt,
+    QDir,
+    Signal,
+    QModelIndex,
+)
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QFileSystemModel,
@@ -22,28 +28,54 @@ from PySide6.QtWidgets import (
 )
 
 from geek_fanatic.plugins.editor.ui.widgets.editor import Editor
-
 from .dialogs import FileDialogs, FindReplaceDialog, SettingsDialog
-
 
 class MainWindow(QMainWindow):
     """主窗口"""
 
     # 信号定义
-    fileOpened = Signal(str)  # 打开文件
-    fileSaved = Signal(str)  # 保存文件
+    fileOpened = Signal(str)  # 打开文件信号
+    fileSaved = Signal(str)  # 保存文件信号
 
-    def __init__(self, ide=None):
+    def __init__(self, ide: Optional[Any] = None) -> None:
+        """初始化主窗口
+
+        Args:
+            ide: IDE 实例
+        """
         super().__init__()
         self.ide = ide
         self.setWindowTitle("GeekFanatic")
         self.setGeometry(100, 100, 1200, 800)
 
+        # 初始化UI组件
+        self._status_bar: QStatusBar
+        self.file_tree: QTreeView
+        self.file_model: QFileSystemModel
+        self.editor: Editor
+        
+        # 初始化Action
+        self.new_action: QAction
+        self.open_action: QAction
+        self.save_action: QAction
+        self.save_as_action: QAction
+        self.exit_action: QAction
+        self.undo_action: QAction
+        self.redo_action: QAction
+        self.cut_action: QAction
+        self.copy_action: QAction
+        self.paste_action: QAction
+        self.find_action: QAction
+        self.toggle_tree_action: QAction
+        self.settings_action: QAction
+        self.about_action: QAction
+
+        # 创建界面
         self._setup_ui()
         self._setup_styles()
         self._connect_signals()
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
         """设置界面"""
         # 创建菜单栏
         self._create_menu_bar()
@@ -52,9 +84,9 @@ class MainWindow(QMainWindow):
         self._create_tool_bar()
 
         # 创建状态栏
-        self.statusBar = QStatusBar()
-        self.setStatusBar(self.statusBar)
-        self.statusBar.showMessage("就绪")
+        self._status_bar = QStatusBar(self)
+        self.setStatusBar(self._status_bar)
+        self._status_bar.showMessage("就绪")
 
         # 创建中央部件
         central_widget = QWidget()
@@ -66,7 +98,7 @@ class MainWindow(QMainWindow):
         main_layout.setSpacing(0)
 
         # 创建分割器
-        splitter = QSplitter(Qt.Horizontal)
+        splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)
 
         # 创建左侧导航面板
@@ -78,9 +110,11 @@ class MainWindow(QMainWindow):
         self.file_tree = QTreeView()
         self.file_tree.setHeaderHidden(True)
         self.file_model = QFileSystemModel()
-        self.file_model.setRootPath(QDir.currentPath())
+        root_path = QDir.currentPath()
+        self.file_model.setRootPath(root_path)
+        root_index = self.file_model.index(root_path)
         self.file_tree.setModel(self.file_model)
-        self.file_tree.setRootIndex(self.file_model.index(QDir.currentPath()))
+        self.file_tree.setRootIndex(root_index)
         # 只显示文件名
         self.file_tree.hideColumn(1)  # 大小
         self.file_tree.hideColumn(2)  # 类型
@@ -103,7 +137,7 @@ class MainWindow(QMainWindow):
         splitter.setStretchFactor(0, 1)  # 导航面板
         splitter.setStretchFactor(1, 4)  # 编辑区域
 
-    def _create_menu_bar(self):
+    def _create_menu_bar(self) -> None:
         """创建菜单栏"""
         menubar = self.menuBar()
 
@@ -183,7 +217,7 @@ class MainWindow(QMainWindow):
         self.about_action = QAction("关于(&A)", self)
         help_menu.addAction(self.about_action)
 
-    def _create_tool_bar(self):
+    def _create_tool_bar(self) -> None:
         """创建工具栏"""
         toolbar = QToolBar()
         self.addToolBar(toolbar)
@@ -201,7 +235,7 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self.undo_action)
         toolbar.addAction(self.redo_action)
 
-    def _setup_styles(self):
+    def _setup_styles(self) -> None:
         """设置样式"""
         self.setStyleSheet(
             """
@@ -253,7 +287,7 @@ class MainWindow(QMainWindow):
         """
         )
 
-    def _connect_signals(self):
+    def _connect_signals(self) -> None:
         """连接信号"""
         # 文件操作
         self.new_action.triggered.connect(self._on_new)
@@ -263,11 +297,11 @@ class MainWindow(QMainWindow):
         self.exit_action.triggered.connect(self.close)
 
         # 编辑操作
-        self.undo_action.triggered.connect(self.editor.undo)
-        self.redo_action.triggered.connect(self.editor.redo)
-        self.cut_action.triggered.connect(self.editor.cut)
-        self.copy_action.triggered.connect(self.editor.copy)
-        self.paste_action.triggered.connect(self.editor.paste)
+        self.undo_action.triggered.connect(self.editor.undo)  # type: ignore
+        self.redo_action.triggered.connect(self.editor.redo)  # type: ignore
+        self.cut_action.triggered.connect(self.editor.cut)  # type: ignore
+        self.copy_action.triggered.connect(self.editor.copy)  # type: ignore
+        self.paste_action.triggered.connect(self.editor.paste)  # type: ignore
         self.find_action.triggered.connect(self._show_find_dialog)
 
         # 视图操作
@@ -281,71 +315,80 @@ class MainWindow(QMainWindow):
 
         # 编辑器
         if hasattr(self.editor, "cursorPositionChanged"):
-            self.editor.cursorPositionChanged.connect(self._on_cursor_changed)
+            self.editor.cursorPositionChanged.connect(self._on_cursor_changed)  # type: ignore
 
-    def _on_new(self):
+    def _on_new(self) -> None:
         """新建文件"""
-        self.editor.clear()
-        self.statusBar.showMessage("新建文件")
+        self.editor.clear()  # type: ignore
+        self._status_bar.showMessage("新建文件")
 
-    def _on_open(self):
+    def _on_open(self) -> None:
         """打开文件"""
         file_name = FileDialogs.get_open_file_name(self)
         if file_name:
             try:
                 with open(file_name, "r", encoding="utf-8") as f:
                     content = f.read()
-                self.editor.setPlainText(content)
-                self.statusBar.showMessage(f"已打开：{file_name}")
+                self.editor.setPlainText(content)  # type: ignore
+                self._status_bar.showMessage(f"已打开：{file_name}")
                 self.fileOpened.emit(file_name)
             except Exception as e:
-                self.statusBar.showMessage(f"打开文件失败：{str(e)}")
+                self._status_bar.showMessage(f"打开文件失败：{str(e)}")
 
-    def _on_save(self):
+    def _on_save(self) -> None:
         """保存文件"""
-        # TODO: 实现保存功能
-        self.statusBar.showMessage("文件已保存")
+        # TODO: 实现保存功能，需要记住当前文件路径
+        self._status_bar.showMessage("文件已保存")
 
-    def _on_save_as(self):
+    def _on_save_as(self) -> None:
         """另存为"""
         file_name = FileDialogs.get_save_file_name(self)
         if file_name:
             try:
                 with open(file_name, "w", encoding="utf-8") as f:
-                    f.write(self.editor.toPlainText())
-                self.statusBar.showMessage(f"已保存：{file_name}")
+                    f.write(self.editor.toPlainText())  # type: ignore
+                self._status_bar.showMessage(f"已保存：{file_name}")
                 self.fileSaved.emit(file_name)
             except Exception as e:
-                self.statusBar.showMessage(f"保存文件失败：{str(e)}")
+                self._status_bar.showMessage(f"保存文件失败：{str(e)}")
 
-    def _show_find_dialog(self):
+    def _show_find_dialog(self) -> None:
         """显示查找对话框"""
         dialog = FindReplaceDialog(self)
         dialog.show()
 
-    def _show_settings_dialog(self):
+    def _show_settings_dialog(self) -> None:
         """显示设置对话框"""
         dialog = SettingsDialog(self)
         if dialog.exec_():
             # TODO: 应用设置
             pass
 
-    def _toggle_file_tree(self, checked: bool):
+    def _toggle_file_tree(self, checked: bool) -> None:
         """切换文件树显示状态"""
         self.file_tree.setVisible(checked)
 
-    def _on_file_clicked(self, index):
-        """处理文件点击"""
+    def _on_file_clicked(self, index: QModelIndex) -> None:
+        """处理文件点击
+
+        Args:
+            index: 被点击的文件索引
+        """
         file_path = self.file_model.filePath(index)
         if file_path and file_path.endswith((".txt", ".py", ".md")):
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                self.editor.setPlainText(content)
-                self.statusBar.showMessage(f"已打开：{file_path}")
+                self.editor.setPlainText(content)  # type: ignore
+                self._status_bar.showMessage(f"已打开：{file_path}")
             except Exception as e:
-                self.statusBar.showMessage(f"打开文件失败：{str(e)}")
+                self._status_bar.showMessage(f"打开文件失败：{str(e)}")
 
-    def _on_cursor_changed(self, line: int, column: int):
-        """处理光标位置变化"""
-        self.statusBar.showMessage(f"行：{line}，列：{column}")
+    def _on_cursor_changed(self, line: int, column: int) -> None:
+        """处理光标位置变化
+
+        Args:
+            line: 行号
+            column: 列号
+        """
+        self._status_bar.showMessage(f"行：{line}，列：{column}")

@@ -2,20 +2,23 @@
 编辑器小部件实现
 """
 
-from PySide6.QtCore import QRect, Qt, Signal
+from typing import List, Optional, Type, Any
+
+# pylint: disable=no-name-in-module,import-error
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import (
     QColor,
     QFont,
     QKeyEvent,
     QPainter,
+    QPaintEvent,
     QPen,
-    QSyntaxHighlighter,
+    QResizeEvent,
     QTextCharFormat,
     QTextCursor,
     QTextFormat,
 )
 from PySide6.QtWidgets import QPlainTextEdit, QVBoxLayout, QWidget
-
 
 class Editor(QPlainTextEdit):
     """编辑器控件"""
@@ -23,11 +26,18 @@ class Editor(QPlainTextEdit):
     # 自定义信号
     cursorPositionChanged = Signal(int, int)  # 行号，列号
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        """初始化编辑器
+
+        Args:
+            parent: 父窗口部件
+        """
         super().__init__(parent)
+        # 获取 extraSelectionClass
+        self._extra_selection_class = getattr(QPlainTextEdit, "ExtraSelection")
         self._setup_editor()
 
-    def _setup_editor(self):
+    def _setup_editor(self) -> None:
         """初始化编辑器"""
         # 设置字体
         font = QFont("Consolas", 14)
@@ -39,8 +49,8 @@ class Editor(QPlainTextEdit):
         self.setTabStopDistance(4 * metrics.horizontalAdvance(" "))
 
         # 显示行号
-        self._show_line_numbers = True
-        self._line_number_area_width = 50
+        self._show_line_numbers: bool = True
+        self._line_number_area_width: int = 50
 
         # 设置内边距，为行号区域留出空间
         self.setViewportMargins(self._line_number_area_width, 0, 0, 0)
@@ -49,60 +59,83 @@ class Editor(QPlainTextEdit):
         self.cursorPositionChanged.connect(self._on_cursor_position_changed)
 
     def line_number_area_width(self) -> int:
-        """获取行号区域宽度"""
+        """获取行号区域宽度
+
+        Returns:
+            行号区域的像素宽度
+        """
         return self._line_number_area_width
 
-    def paintEvent(self, event):
-        """重写绘制事件，添加行号"""
+    def paintEvent(self, event: QPaintEvent) -> None:
+        """重写绘制事件，添加行号
+
+        Args:
+            event: 绘制事件对象
+        """
         # 先调用父类的绘制
         super().paintEvent(event)
 
-        if self._show_line_numbers:
-            painter = QPainter(self.viewport())
-            painter.setPen(Qt.NoPen)
+        if not self._show_line_numbers:
+            return
+
+        painter = QPainter(self.viewport())
+        try:
+            # 设置画笔
+            no_pen = QPen()
+            no_pen.setStyle(Qt.PenStyle.NoPen)
+            painter.setPen(no_pen)
 
             # 绘制行号区域背景
-            area_rect = QRect(
-                0, 0, self._line_number_area_width, self.viewport().height()
+            painter.fillRect(
+                0,
+                0,
+                self._line_number_area_width,
+                self.viewport().height(),
+                QColor("#1e1e1e")
             )
-            painter.fillRect(area_rect, QColor("#1e1e1e"))
 
             block = self.firstVisibleBlock()
             block_number = block.blockNumber()
-            top = (
+            top = int(
                 self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
             )
-            bottom = top + self.blockBoundingRect(block).height()
+            bottom = top + int(self.blockBoundingRect(block).height())
 
-            painter.setPen(QColor("#858585"))
+            # 设置行号颜色
+            painter.setPen(QPen(QColor("#858585")))
 
+            # 绘制所有可见行号
             while block.isValid() and top <= event.rect().bottom():
                 if block.isVisible() and bottom >= event.rect().top():
                     number = str(block_number + 1)
                     painter.drawText(
                         0,
-                        int(top),
+                        top,
                         self._line_number_area_width - 5,
                         self.fontMetrics().height(),
-                        Qt.AlignRight,
+                        int(Qt.AlignmentFlag.AlignRight),
                         number,
                     )
 
                 block = block.next()
                 top = bottom
-                bottom = top + self.blockBoundingRect(block).height()
+                bottom = top + int(self.blockBoundingRect(block).height())
                 block_number += 1
 
+        finally:
             painter.end()
 
-    def resizeEvent(self, event):
-        """重写调整大小事件"""
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        """重写调整大小事件
+
+        Args:
+            event: 调整大小事件对象
+        """
         super().resizeEvent(event)
         # 调整滚动区域大小
-        cr = self.contentsRect()
         self.setViewportMargins(self._line_number_area_width, 0, 0, 0)
 
-    def _on_cursor_position_changed(self):
+    def _on_cursor_position_changed(self) -> None:
         """处理光标位置变化"""
         cursor = self.textCursor()
         block = cursor.block()
@@ -113,25 +146,34 @@ class Editor(QPlainTextEdit):
         # 高亮当前行
         self._highlight_current_line()
 
-    def _highlight_current_line(self):
+    def _highlight_current_line(self) -> None:
         """高亮当前行"""
-        extra_selections = []
+        selections = []
 
         if not self.isReadOnly():
-            selection = QPlainTextEdit.ExtraSelection()
-            line_color = QColor("#282828")
-            selection.format.setBackground(line_color)
-            selection.format.setProperty(QTextFormat.FullWidthSelection, True)
-            selection.cursor = self.textCursor()
-            selection.cursor.clearSelection()
-            extra_selections.append(selection)
+            extra_sel = self._extra_selection_class()
+            text_format = QTextCharFormat()
+            text_format.setBackground(QColor("#282828"))
+            text_format.setProperty(
+                QTextFormat.Property.FullWidthSelection,
+                True
+            )
+            extra_sel.format = text_format
+            extra_sel.cursor = self.textCursor()
+            extra_sel.cursor.clearSelection()
+            selections.append(extra_sel)
 
-        self.setExtraSelections(extra_selections)
+        self.setExtraSelections(selections)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        """处理按键事件"""
-        if event.key() == Qt.Key_Tab:
+        """处理按键事件
+
+        Args:
+            event: 键盘事件对象
+        """
+        if event.key() == int(Qt.Key.Key_Tab):
             # 插入4个空格
             self.insertPlainText("    ")
+            event.accept()
         else:
             super().keyPressEvent(event)

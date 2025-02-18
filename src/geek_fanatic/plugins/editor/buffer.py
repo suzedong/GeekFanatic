@@ -5,10 +5,10 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
+# pylint: disable=no-name-in-module,import-error
 from PySide6.QtCore import QObject, Signal
 
 from geek_fanatic.plugins.editor.types import Position
-
 
 @dataclass
 class TextOperation:
@@ -24,7 +24,6 @@ class TextOperation:
     def revert(self, buffer: "TextBuffer") -> None:
         """撤销操作"""
         raise NotImplementedError
-
 
 @dataclass
 class InsertOperation(TextOperation):
@@ -71,14 +70,13 @@ class InsertOperation(TextOperation):
                 buffer._content.pop(self.start.line + 1)
             buffer._content[self.start.line] = new_line
 
-
-@dataclass
-class DeleteOperation:
+class DeleteOperation(TextOperation):
     """删除操作"""
 
-    start: Position
-    end: Position
-    deleted_text: str  # 存储被删除的文本，用于撤销操作
+    def __init__(self, start: Position, end: Position, deleted_text: str) -> None:
+        """初始化删除操作"""
+        super().__init__(start=start, text=deleted_text)
+        self.end = end
 
     def apply(self, buffer: "TextBuffer") -> None:
         """应用删除操作"""
@@ -103,8 +101,7 @@ class DeleteOperation:
 
     def revert(self, buffer: "TextBuffer") -> None:
         """撤销删除操作"""
-        InsertOperation(self.start, self.deleted_text).apply(buffer)
-
+        InsertOperation(self.start, self.text).apply(buffer)
 
 class TextBuffer(QObject):
     """文本缓冲区实现"""
@@ -166,8 +163,8 @@ class TextBuffer(QObject):
             lines.append(first_line)
 
             # 中间行
-            for line in range(start.line + 1, end.line):
-                lines.append(self._content[line])
+            for i in range(start.line + 1, end.line):
+                lines.append(self._content[i])
 
             # 最后一行
             last_line = self._content[end.line][: end.column]
