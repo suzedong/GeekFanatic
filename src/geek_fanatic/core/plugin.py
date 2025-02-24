@@ -8,10 +8,33 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Optional, Type, Any, cast, Protocol, runtime_checkable
 
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget
+
 @runtime_checkable
 class IDEProtocol(Protocol):
     """IDE 接口协议"""
     pass
+
+class ActivityIcon:
+    """活动栏图标配置"""
+    def __init__(self, icon: QIcon, tooltip: str):
+        """初始化活动栏图标
+
+        Args:
+            icon: 图标
+            tooltip: 提示文本
+        """
+        self.icon = icon
+        self.tooltip = tooltip
+
+class PluginViews:
+    """插件视图集合"""
+    def __init__(self):
+        """初始化插件视图集合"""
+        self.activity_icon: Optional[ActivityIcon] = None  # 活动栏图标
+        self.side_views: Dict[str, QWidget] = {}          # 侧边栏视图
+        self.work_views: Dict[str, QWidget] = {}          # 工作区视图
 
 class Plugin(ABC):
     """插件基类"""
@@ -61,6 +84,15 @@ class Plugin(ABC):
         """
         return ""
 
+    @abstractmethod
+    def get_views(self) -> PluginViews:
+        """获取插件视图
+
+        Returns:
+            PluginViews: 插件的视图集合
+        """
+        pass
+
     def initialize(self) -> None:
         """初始化插件
 
@@ -83,6 +115,15 @@ class PluginManager:
         self._plugin_dirs: List[Path] = []
         self._plugin_classes: Dict[str, Type[Plugin]] = {}
         self._logger = logging.getLogger(__name__)
+        self._ide = None
+
+    def set_ide(self, ide: IDEProtocol) -> None:
+        """设置IDE实例
+
+        Args:
+            ide: IDE实例
+        """
+        self._ide = ide
 
     def add_plugin_directory(self, directory: Path) -> None:
         """添加插件目录
@@ -113,6 +154,23 @@ class PluginManager:
             Optional[Type[Plugin]]: 对应的插件类，如果不存在则返回None
         """
         return self._plugin_classes.get(plugin_id)
+
+    def _load_plugin(self, plugin_class: Type[Plugin]) -> None:
+        """加载单个插件
+
+        Args:
+            plugin_class: 插件类
+        """
+        plugin = plugin_class(self._ide)
+        plugin_id = plugin.id
+
+        # 获取并注册插件视图
+        views = plugin.get_views()
+        if hasattr(self._ide, 'layout'):
+            self._ide.layout.register_plugin_views(plugin_id, views)
+
+        # 初始化插件
+        plugin.initialize()
 
     def _load_plugin_module(
         self, 

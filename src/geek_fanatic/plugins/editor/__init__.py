@@ -3,11 +3,12 @@
 """
 
 from pathlib import Path
-from typing import Any, Dict, Protocol, Optional
+from typing import Optional, Dict
 
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QTabWidget
 
-from geek_fanatic.core.plugin import Plugin
+from geek_fanatic.core.plugin import Plugin, PluginViews, ActivityIcon
 from geek_fanatic.core.config import ConfigRegistry
 from geek_fanatic.core.view import ViewRegistry
 from geek_fanatic.core.command import CommandRegistry
@@ -18,7 +19,67 @@ from .editor import Editor
 from .file_explorer import FileExplorer
 from .commands.basic import DeleteCommand, RedoCommand, UndoCommand
 
-class IDEProtocol(Protocol):
+class EditorManager(QWidget):
+    """编辑器管理器"""
+    
+    def __init__(self) -> None:
+        """初始化编辑器管理器"""
+        super().__init__()
+        self._editors: Dict[str, Editor] = {}
+        self._setup_ui()
+    
+    def _setup_ui(self) -> None:
+        """设置UI"""
+        self._layout = QVBoxLayout(self)
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+        
+        self._tab_widget = QTabWidget()
+        self._tab_widget.setTabsClosable(True)
+        self._tab_widget.setMovable(True)
+        self._tab_widget.tabCloseRequested.connect(self._on_tab_close_requested)
+        self._layout.addWidget(self._tab_widget)
+    
+    def open_file(self, file_path: str) -> None:
+        """打开文件
+        
+        Args:
+            file_path: 文件路径
+        """
+        # 如果文件已经打开，切换到对应标签
+        if file_path in self._editors:
+            editor = self._editors[file_path]
+            self._tab_widget.setCurrentWidget(editor)
+            return
+            
+        # 创建新编辑器
+        editor = Editor()
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                editor.setPlainText(f.read())
+        except Exception as e:
+            print(f"Error loading file: {e}")
+            return
+            
+        # 添加到标签页
+        self._editors[file_path] = editor
+        self._tab_widget.addTab(editor, Path(file_path).name)
+        self._tab_widget.setCurrentWidget(editor)
+    
+    def _on_tab_close_requested(self, index: int) -> None:
+        """处理标签页关闭请求
+        
+        Args:
+            index: 标签页索引
+        """
+        editor = self._tab_widget.widget(index)
+        for path, ed in self._editors.items():
+            if ed == editor:
+                del self._editors[path]
+                break
+        self._tab_widget.removeTab(index)
+
+class IDEProtocol:
     """IDE 接口协议"""
     command_registry: CommandRegistry
     config_registry: ConfigRegistry
@@ -35,7 +96,7 @@ class EditorPlugin(Plugin):
             raise ValueError("IDE instance is required")
         self._ide_impl = ide
         self._file_explorer = FileExplorer()
-        self._editors: Dict[str, Editor] = {}
+        self._editor_manager = EditorManager()
 
     @property
     def id(self) -> str:
@@ -57,6 +118,25 @@ class EditorPlugin(Plugin):
         """获取插件描述"""
         return "提供基础的文本编辑功能"
 
+    def get_views(self) -> PluginViews:
+        """获取插件视图"""
+        views = PluginViews()
+        
+        # 活动栏图标
+        icons_dir = Path(__file__).parent.parent.parent / "resources" / "icons"
+        views.activity_icon = ActivityIcon(
+            icon=QIcon(str(icons_dir / "explorer.svg")),
+            tooltip=self.name
+        )
+        
+        # 侧边栏文件浏览器
+        views.side_views["explorer"] = self._file_explorer
+        
+        # 工作区编辑器
+        views.work_views["editor"] = self._editor_manager
+        
+        return views
+
     def initialize(self) -> None:
         """初始化插件"""
         super().initialize()
@@ -66,9 +146,6 @@ class EditorPlugin(Plugin):
         
         # 注册配置
         self._register_configuration()
-        
-        # 注册到布局系统
-        self._register_to_layout()
         
         # 连接信号
         self._connect_signals()
@@ -86,7 +163,7 @@ class EditorPlugin(Plugin):
 
     def _register_configuration(self) -> None:
         """注册编辑器配置"""
-        config: Dict[str, Any] = {
+        config = {
             "editor": {
                 "font": {
                     "family": {
@@ -115,57 +192,21 @@ class EditorPlugin(Plugin):
         }
         self._ide_impl.config_registry.register(config)
 
-    def _register_to_layout(self) -> None:
-        """注册到布局系统"""
-        layout = self._ide_impl.layout
-        
-        # 添加到侧边栏
-        layout.side_bar.add_view(self._file_explorer)
-        
-        # 添加活动栏图标
-        icons_dir = Path(__file__).parent.parent.parent / "resources" / "icons"
-        layout.activity_bar.add_item(
-            self.id,
-            QIcon(str(icons_dir / "explorer.svg")),
-            self.name
-        )
-
     def _connect_signals(self) -> None:
         """连接信号"""
         # 监听文件浏览器的文件选择
         self._file_explorer.fileSelected.connect(self._on_file_selected)
 
     def _on_file_selected(self, file_path: str) -> None:
-        """处理文件选择事件"""
-        # 如果文件已经打开，激活对应标签页
-        if file_path in self._editors:
-            editor = self._editors[file_path]
-            self._ide_impl.layout.work_area.set_active_group("main")
-            return
-
-        # 否则创建新的编辑器和标签页
-        editor = Editor()
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                editor.setPlainText(f.read())
-        except Exception as e:
-            print(f"Error loading file: {e}")
-            return
-
-        # 创建标签页
-        tab = WorkTab(file_path, Path(file_path).name)
-        editor.setParent(tab.content_widget)
-        # 将编辑器添加到标签页的内容区域
-        tab.content_widget.layout().addWidget(editor)
+        """处理文件选择事件
         
-        # 保存编辑器引用
-        self._editors[file_path] = editor
-        
-        # 添加到工作区
-        self._ide_impl.layout.work_area.add_tab("main", tab)
+        Args:
+            file_path: 文件路径
+        """
+        self._editor_manager.open_file(file_path)
 
     def cleanup(self) -> None:
         """清理插件"""
-        # 关闭所有编辑器
-        self._editors.clear()
+        # 清理编辑器资源
+        self._editor_manager._editors.clear()
         super().cleanup()

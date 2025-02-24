@@ -1,144 +1,165 @@
-# GeekFanatic 架构设计
-
-GeekFanatic 是一个模仿 VSCode 界面布局的程序框架，提供了灵活的插件系统和统一的界面布局。
+# GeekFanatic 架构文档
 
 ## 整体架构
 
-### 核心模块
+GeekFanatic 采用插件化架构，主要由以下部分组成：
+- 核心框架：提供基础设施和插件管理
+- 插件系统：提供扩展功能
+- UI 框架：基于 Qt 实现的用户界面
 
-1. 布局管理 (core/layout.py)
-- 提供类似 VSCode 的三区域布局
-  * 活动栏：48px宽，用于切换插件
-  * 侧边栏：可调整宽度，显示插件的辅助视图
-  * 工作区：主要功能区域，显示插件的核心功能
+## 界面布局
 
-2. 基础组件 (core/widgets/)
-- activity_bar.py：活动栏组件实现
-- side_bar.py：侧边栏视图容器
-- work_area.py：工作区组件实现
+整体界面分为三个主要区域：
+1. 活动栏 (Activity Bar)：显示已安装插件的图标，用于切换插件
+2. 侧边栏 (Side Bar)：显示当前插件的辅助功能区域，如文件浏览器、设置面板等
+3. 工作区 (Work Area)：显示插件的主要功能区域，如编辑器、插件详情等
 
-3. 插件系统 (core/plugin.py)
-- 插件管理和加载
-- 插件生命周期管理
-- IDE接口协议定义
+### 布局管理
 
-4. 其他核心功能
-- 命令系统 (core/command.py)
-- 配置系统 (core/config.py)
-- 视图系统 (core/view.py)
-- 主题系统 (core/theme.py)
-- 窗口管理 (core/window.py)
+布局管理由 `Layout` 类负责，实现了：
+- 界面区域的初始化和组织
+- 插件视图的管理和切换
+- 布局状态的保存和恢复
 
-### 插件架构
+## 插件系统
 
-每个插件需要提供以下组件：
+### 插件结构
 
-1. 活动栏项目
-- 图标：用于在活动栏中显示
-- 名称：悬停提示
-- 点击事件：切换到该插件的功能
+每个插件必须包含：
+- setup.py：插件的注册配置
+- __init__.py：插件的主要实现
 
-2. 侧边栏视图
-- 继承自 SideBarView
-- 提供插件的辅助功能
-- 与工作区内容联动
+### 插件接口
 
-3. 工作区内容
-- 插件的主要功能界面
-- 通过 WorkTab 系统管理
+插件需要实现以下接口：
+```python
+class Plugin(ABC):
+    @property
+    @abstractmethod
+    def id(self) -> str:
+        """插件唯一标识符"""
+        pass
 
-### 交互流程
+    @abstractmethod
+    def get_views(self) -> PluginViews:
+        """获取插件视图"""
+        pass
 
-1. 插件切换
-- 用户点击活动栏图标
-- 系统切换到对应插件
-- 显示插件的侧边栏视图和工作区内容
+    def initialize(self) -> None:
+        """初始化插件"""
+        pass
 
-2. 视图联动
-- 侧边栏视图操作
-- 触发工作区内容更新
-- 保持两个区域的同步
+    def cleanup(self) -> None:
+        """清理插件资源"""
+        pass
+```
 
-## 示例：编辑器插件
+### 插件视图
 
-编辑器插件展示了完整的功能实现：
+插件视图通过 `PluginViews` 类统一管理：
+```python
+class PluginViews:
+    def __init__(self):
+        self.activity_icon: Optional[ActivityIcon] = None  # 活动栏图标
+        self.side_views: Dict[str, QWidget] = {}          # 侧边栏视图
+        self.work_views: Dict[str, QWidget] = {}          # 工作区视图
+```
 
-1. 活动栏集成
-- 显示编辑器图标
-- 点击激活编辑器功能
+### 注册规范
 
-2. 侧边栏实现
-- 文件浏览器视图
-- 文件树展示
-- 文件选择功能
+1. 活动栏图标：
+   - 用于切换插件
+   - 只显示图标和悬停提示
 
-3. 工作区功能
-- 多标签页管理
-- 文本编辑功能
-- 基础编辑命令
+2. 侧边栏视图：
+   - 显示插件的辅助功能
+   - 如：文件浏览器、插件列表、菜单区、设置区等
 
-4. 交互联动
-- 侧边栏选择文件
-- 工作区打开编辑器
-- 自动创建新标签页
+3. 工作区视图：
+   - 显示插件的主要功能
+   - 如：编辑器内容、插件详情、业务内容等
+
+## 插件示例
+
+以编辑器插件为例：
+
+```python
+class EditorPlugin(Plugin):
+    def get_views(self) -> PluginViews:
+        views = PluginViews()
+        
+        # 活动栏图标
+        views.activity_icon = ActivityIcon(
+            icon=QIcon("explorer.svg"),
+            tooltip="文件浏览器"
+        )
+        
+        # 侧边栏：文件浏览器
+        views.side_views["explorer"] = FileExplorer()
+        
+        # 工作区：编辑器
+        views.work_views["editor"] = EditorManager()
+        
+        return views
+```
+
+## 开发规范
+
+1. 插件开发：
+   - 遵循插件接口规范
+   - 实现必要的生命周期方法
+   - 合理组织视图结构
+
+2. 视图开发：
+   - 活动栏仅提供图标
+   - 侧边栏实现辅助功能
+   - 工作区实现主要功能
+
+3. 资源管理：
+   - 合理管理插件资源
+   - 及时清理不需要的资源
+   - 实现适当的错误处理
+
+## 依赖关系
+
+- 核心框架：
+  * Qt 框架
+  * Python 标准库
+
+- 插件系统：
+  * 核心框架提供的接口
+  * 插件特定的依赖
 
 ## 扩展机制
 
-1. 插件注册
-```python
-class MyPlugin(Plugin):
-    def initialize(self) -> None:
-        # 注册到布局系统
-        self._register_to_layout()
-        # 注册命令
-        self._register_commands()
-        # 注册配置
-        self._register_configuration()
-```
+1. 插件管理：
+   - 支持动态发现插件
+   - 统一的注册机制
+   - 完整的生命周期管理
 
-2. 布局接入
-```python
-def _register_to_layout(self) -> None:
-    layout = self._ide_impl.layout
-    # 添加活动栏图标
-    layout.activity_bar.add_item(...)
-    # 添加侧边栏视图
-    layout.side_bar.add_view(...)
-    # 添加工作区内容
-    layout.work_area.add_tab(...)
-```
+2. 界面扩展：
+   - 基于视图的界面组织
+   - 灵活的布局管理
+   - 统一的交互模式
 
-3. 视图通信
-```python
-# 侧边栏视图发送信号
-self.someAction.emit(data)
+3. 功能扩展：
+   - 命令系统
+   - 配置系统
+   - 主题系统
 
-# 工作区接收并处理
-def _on_side_bar_action(self, data):
-    # 更新工作区内容
-    self.update_work_area(data)
-```
+## 后续规划
 
-## 配置和资源
+1. 完善插件系统：
+   - 插件依赖管理
+   - 版本控制
+   - 热加载支持
 
-1. 配置系统
-- 插件级配置
-- 用户配置
-- 工作区配置
+2. 增强布局管理：
+   - 布局状态持久化
+   - 自定义布局支持
+   - 多视图组织
 
-2. 资源管理
-- 图标资源
-- 主题资源
-- 样式表
-
-## 未来扩展
-
-1. 布局增强
-- 面板区域
-- 状态栏
-- 更多分割视图
-
-2. 功能扩展
-- 多语言支持
-- 调试集成
-- 版本控制
+3. 提升开发体验：
+   - 完善开发文档
+   - 提供开发模板
+   - 增加调试支持

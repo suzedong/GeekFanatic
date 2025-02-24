@@ -2,14 +2,21 @@
 布局管理系统实现
 """
 
-from typing import Optional
+from typing import Dict, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QSplitter
+from PySide6.QtWidgets import (
+    QMainWindow, 
+    QWidget, 
+    QHBoxLayout, 
+    QSplitter,
+    QStackedWidget
+)
 
 from .widgets.activity_bar import ActivityBar
 from .widgets.side_bar import SideBar
 from .widgets.work_area import WorkArea
+from .plugin import PluginViews
 
 class Layout:
     """布局管理器，负责管理主窗口的整体布局结构"""
@@ -21,6 +28,8 @@ class Layout:
             window: 主窗口实例
         """
         self._window = window
+        self._plugin_views: Dict[str, Dict[str, QWidget]] = {}  # 存储插件视图
+        self._current_plugin: Optional[str] = None
         self._setup_layout()
 
     def _setup_layout(self) -> None:
@@ -63,23 +72,72 @@ class Layout:
 
     def _connect_signals(self) -> None:
         """连接信号"""
-        # 活动栏项目点击时显示对应的侧边栏视图
+        # 活动栏项目点击时显示对应的插件视图
         self._activity_bar.itemClicked.connect(self._on_activity_item_clicked)
         
         # 侧边栏视图变更时更新活动栏状态
         self._side_bar.viewChanged.connect(self._on_side_view_changed)
 
+    def register_plugin_views(self, plugin_id: str, views: PluginViews) -> None:
+        """注册插件视图
+
+        Args:
+            plugin_id: 插件ID
+            views: 插件视图集合
+        """
+        # 注册活动栏图标
+        if views.activity_icon:
+            self._activity_bar.add_item(
+                plugin_id,
+                views.activity_icon.icon,
+                views.activity_icon.tooltip
+            )
+            
+        # 存储插件视图
+        self._plugin_views[plugin_id] = {
+            'side': views.side_views,
+            'work': views.work_views
+        }
+
+    def switch_plugin(self, plugin_id: str) -> None:
+        """切换到指定插件
+
+        Args:
+            plugin_id: 插件ID
+        """
+        if plugin_id not in self._plugin_views:
+            return
+            
+        views = self._plugin_views[plugin_id]
+        
+        # 更新侧边栏
+        self._side_bar.clear()
+        for view in views['side'].values():
+            self._side_bar.add_view(view)
+            
+        # 更新工作区
+        if views['work']:
+            self._work_area.switch_to_plugin_views(views['work'])
+            
+        self._current_plugin = plugin_id
+
     def _on_activity_item_clicked(self, item_id: str) -> None:
         """处理活动栏项目点击
         
         切换到对应插件的视图和功能区
+        
+        Args:
+            item_id: 点击的项目ID
         """
-        # 更新侧边栏视图
+        self.switch_plugin(item_id)
         self._side_bar.set_current_view(item_id)
-        # TODO: 通知插件系统切换工作区内容
 
     def _on_side_view_changed(self, view_id: str) -> None:
-        """处理侧边栏视图变更"""
+        """处理侧边栏视图变更
+        
+        Args:
+            view_id: 变更的视图ID
+        """
         self._activity_bar.set_active_item(view_id)
 
     @property
@@ -100,10 +158,12 @@ class Layout:
     def save_layout(self) -> None:
         """保存布局状态"""
         # TODO: 实现布局状态的保存
+        pass
 
     def restore_layout(self) -> None:
         """恢复布局状态"""
         # TODO: 实现布局状态的恢复
+        pass
 
     def reset_layout(self) -> None:
         """重置布局到默认状态"""

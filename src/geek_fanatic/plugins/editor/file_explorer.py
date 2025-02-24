@@ -15,9 +15,7 @@ from PySide6.QtWidgets import (
     QLabel
 )
 
-from geek_fanatic.core.widgets.side_bar import SideBarView
-
-class FileExplorer(SideBarView):
+class FileExplorer(QWidget):
     """文件浏览器视图
     
     提供文件系统浏览功能。
@@ -28,12 +26,13 @@ class FileExplorer(SideBarView):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """初始化文件浏览器"""
-        super().__init__("explorer", "资源管理器", parent)
+        super().__init__(parent)
+        self.setWindowTitle("资源管理器")
         self._setup_explorer()
 
     def _setup_explorer(self) -> None:
         """设置文件浏览器"""
-        layout = QVBoxLayout(self.content_widget)
+        layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
