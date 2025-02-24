@@ -3,11 +3,10 @@
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, cast, Union
+from typing import Dict, List, Optional
 
 # pylint: disable=no-name-in-module,import-error
-from PySide6 import QtCore, QtWidgets
-from PySide6.QtCore import QObject
+from PySide6 import QtWidgets
 
 class WindowState(str, Enum):
     """窗口状态枚举"""

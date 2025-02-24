@@ -19,7 +19,6 @@ from typing import (
 )
 
 # pylint: disable=no-name-in-module,protected-access
-from PySide6.QtCore import QObject, Signal
 
 from geek_fanatic.plugins.editor.buffer import TextBuffer
 from geek_fanatic.plugins.editor.features import EditorFeature

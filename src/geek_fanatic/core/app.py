@@ -3,17 +3,17 @@ GeekFanatic 核心应用模块
 """
 
 from pathlib import Path
-from typing import Dict, List, Optional, Type
+from typing import Dict, Type
 
+# pylint: disable=no-name-in-module,import-error
 from PySide6.QtCore import QObject, Signal, Slot
-from PySide6.QtQml import QQmlComponent
 
 from geek_fanatic.core.command import CommandRegistry
 from geek_fanatic.core.config import ConfigRegistry
 from geek_fanatic.core.plugin import Plugin, PluginManager
 from geek_fanatic.core.theme import ThemeManager
-from geek_fanatic.core.view import ViewRegistry, ViewType
-from geek_fanatic.core.window import WindowManager
+from geek_fanatic.core.view import ViewRegistry
+from geek_fanatic.core.window import WindowManager, WindowState
 
 
 class GeekFanatic(QObject):
@@ -91,9 +91,22 @@ class GeekFanatic(QObject):
 
     @Slot(str)
     def set_window_state(self, state: str) -> None:
-        """设置窗口状态"""
-        self._window_manager.set_window_state(state)
-        self.windowStateChanged.emit(state)
+        """设置窗口状态
+        
+        Args:
+            state: 窗口状态，可选值：'normal', 'maximized', 'minimized', 'fullscreen'
+            
+        Raises:
+            ValueError: 当提供的状态值无效时抛出
+        """
+        try:
+            window_state = WindowState(state.lower())
+            self._window_manager.set_window_state(window_state)
+            self.windowStateChanged.emit(window_state.value)
+        except ValueError as e:
+            raise ValueError(
+                f"无效的窗口状态: {state}。有效值为: {', '.join(s.value for s in WindowState)}"
+            ) from e
 
     @Slot(str, result=bool)
     def is_plugin_loaded(self, plugin_id: str) -> bool:

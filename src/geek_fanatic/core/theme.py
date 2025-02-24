@@ -5,7 +5,6 @@
 from typing import Dict, List, Optional, Any
 
 # pylint: disable=no-name-in-module,import-error
-import PySide6.QtCore
 from PySide6.QtCore import QObject
 
 class ThemeManager(QObject):

@@ -4,11 +4,9 @@
 
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Pattern, Tuple, TYPE_CHECKING, cast, Any, Callable
+from typing import Dict, List, Optional, Pattern, TYPE_CHECKING
 
 # pylint: disable=no-name-in-module,import-error
-from PySide6 import QtCore
-from PySide6.QtCore import QObject
 from PySide6.QtGui import QColor, QTextCharFormat
 
 from geek_fanatic.plugins.editor.features import EditorFeature
@@ -16,6 +14,7 @@ from geek_fanatic.plugins.editor.buffer import TextBuffer
 
 if TYPE_CHECKING:
     from geek_fanatic.plugins.editor.editor import Editor
+
 
 @dataclass
 class TokenType:
@@ -32,6 +31,7 @@ class TokenType:
         """
         self.regex: Pattern[str] = re.compile(self.pattern)
 
+
 @dataclass
 class Token:
     """语法标记"""
@@ -40,6 +40,7 @@ class Token:
     text: str  # 标记文本
     start: int  # 起始位置
     end: int  # 结束位置
+
 
 class SyntaxHighlight(EditorFeature):
     """语法高亮功能实现"""
@@ -64,7 +65,9 @@ class SyntaxHighlight(EditorFeature):
         # 注：这里使用动态方式连接信号，避免类型检查问题
         try:
             content_changed = getattr(self._editor, "contentChanged", None)
-            if content_changed is not None and callable(getattr(content_changed, "connect", None)):
+            if content_changed is not None and callable(
+                getattr(content_changed, "connect", None)
+            ):
                 # 使用动态调用避免类型检查
                 getattr(content_changed, "connect")(self._rehighlight)
         except (AttributeError, TypeError):
@@ -88,29 +91,11 @@ class SyntaxHighlight(EditorFeature):
             )
         )
         # 字符串
-        self.register_token_type(
-            TokenType(
-                "string",
-                r'"[^"]*"|\'[^\']*\'',
-                "#008000"
-            )
-        )
+        self.register_token_type(TokenType("string", r'"[^"]*"|\'[^\']*\'', "#008000"))
         # 数字
-        self.register_token_type(
-            TokenType(
-                "number",
-                r"\b\d+(\.\d+)?\b",
-                "#800000"
-            )
-        )
+        self.register_token_type(TokenType("number", r"\b\d+(\.\d+)?\b", "#800000"))
         # 注释
-        self.register_token_type(
-            TokenType(
-                "comment",
-                r"#[^\n]*",
-                "#808080"
-            )
-        )
+        self.register_token_type(TokenType("comment", r"#[^\n]*", "#808080"))
         # 内置函数
         self.register_token_type(
             TokenType(

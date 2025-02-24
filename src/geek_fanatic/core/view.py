@@ -3,10 +3,10 @@
 """
 
 from enum import Enum
-from typing import Any, Dict, List, Union, TypedDict, Optional, cast
+from typing import Dict, List, Union, TypedDict, Optional
 
-# pylint: disable=no-name-in-module,import-error
-from PySide6 import QtCore, QtWidgets
+# pylint: disable=no-name-in-module
+from PySide6 import QtWidgets
 
 ViewComponent = Union["QtWidgets.QWidget", str]
 

@@ -2,10 +2,9 @@
 配置系统实现
 """
 
-from typing import Any, Dict, Optional, TypeVar, Union, cast, TypedDict, Callable
+from typing import Any, Dict, Optional, TypeVar, cast, TypedDict, Callable
 
 # pylint: disable=no-name-in-module,import-error
-from PySide6 import QtCore
 from PySide6.QtCore import QObject
 
 T = TypeVar('T')

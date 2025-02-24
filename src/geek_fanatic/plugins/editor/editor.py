@@ -2,12 +2,12 @@
 编辑器基类实现
 """
 
-from typing import Optional, List, Tuple, cast
+from typing import Optional, Tuple
 
 # pylint: disable=no-name-in-module,import-error
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFont, QTextCursor
+from PySide6 import QtGui, QtWidgets
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QPlainTextEdit, QWidget
 
 

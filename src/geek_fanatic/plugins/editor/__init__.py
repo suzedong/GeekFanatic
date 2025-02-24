@@ -2,10 +2,10 @@
 编辑器插件入口模块
 """
 
-from typing import Any, Dict, TYPE_CHECKING, cast, Protocol, Optional, Type, Callable
+from typing import Any, Dict, Protocol, Optional, Type
 
-# pylint: disable=no-name-in-module,import-error,protected-access,c-extension-no-member,unused-import
-from PySide6 import QtCore, QtQml, QtWidgets
+# pylint: disable=no-name-in-module
+from PySide6 import QtQml
 from PySide6.QtCore import QObject
 from PySide6.QtQml import QQmlEngine
 
