@@ -5,16 +5,15 @@ GeekFanatic 核心应用模块
 from pathlib import Path
 from typing import Dict, Type
 
-# pylint: disable=no-name-in-module,import-error
 from PySide6.QtCore import QObject, Signal, Slot
 
-from geek_fanatic.core.command import CommandRegistry
-from geek_fanatic.core.config import ConfigRegistry
-from geek_fanatic.core.plugin import Plugin, PluginManager
-from geek_fanatic.core.theme import ThemeManager
-from geek_fanatic.core.view import ViewRegistry
-from geek_fanatic.core.window import WindowManager, WindowState
-
+from .command import CommandRegistry
+from .config import ConfigRegistry
+from .plugin import Plugin, PluginManager
+from .theme import ThemeManager
+from .view import ViewRegistry
+from .window import WindowManager, WindowState
+from .layout import Layout
 
 class GeekFanatic(QObject):
     """核心类，管理整个应用程序的生命周期和核心功能"""
@@ -36,6 +35,7 @@ class GeekFanatic(QObject):
         self._command_registry = CommandRegistry()
         self._config_registry = ConfigRegistry()
         self._view_registry = ViewRegistry()
+        self._layout: Layout = None
 
         # 插件注册表
         self._plugins: Dict[str, Plugin] = {}
@@ -75,7 +75,9 @@ class GeekFanatic(QObject):
 
     def _ensure_builtin_plugins(self) -> None:
         """确保内置插件被加载"""
-        builtin_plugins = ["geekfanatic.editor"]  # 编辑器插件
+        builtin_plugins = [
+            "geekfanatic.editor"  # 编辑器插件（含文件浏览器）
+        ]
 
         for plugin_id in builtin_plugins:
             if not self.is_plugin_loaded(plugin_id):
@@ -150,3 +152,12 @@ class GeekFanatic(QObject):
     def view_registry(self) -> ViewRegistry:
         """获取视图注册表"""
         return self._view_registry
+
+    @property
+    def layout(self) -> Layout:
+        """获取布局管理器"""
+        return self._layout
+
+    def set_layout(self, layout: Layout) -> None:
+        """设置布局管理器"""
+        self._layout = layout

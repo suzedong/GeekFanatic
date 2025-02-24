@@ -1,29 +1,54 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-基本编辑器命令
+基础编辑器命令模块
 """
 
-from geek_fanatic.core.command import Command
+from typing import Optional
 
+from ....core.command import Command, command
+from ..editor import Editor
 
+@command("editor.delete")
 class DeleteCommand(Command):
-    def __init__(self) -> None:
-        super().__init__("editor.delete", "删除选中内容")
+    """删除命令"""
+    
+    def execute(self, editor: Optional[Editor] = None) -> None:
+        if editor is None or not hasattr(editor, 'delete_at_cursor'):
+            return
+            
+        if editor.has_selection():
+            editor.delete_selection()
+        else:
+            editor.delete_at_cursor()
 
-    def execute(self) -> None:
-        pass
-
-
+@command("editor.undo")
 class UndoCommand(Command):
-    def __init__(self) -> None:
-        super().__init__("editor.undo", "撤销")
+    """撤销命令"""
+    
+    def execute(self, editor: Optional[Editor] = None) -> None:
+        if editor is None:
+            return
+            
+        editor.undo()
 
-    def execute(self) -> None:
-        pass
-
-
+@command("editor.redo")
 class RedoCommand(Command):
-    def __init__(self) -> None:
-        super().__init__("editor.redo", "重做")
+    """重做命令"""
+    
+    def execute(self, editor: Optional[Editor] = None) -> None:
+        if editor is None:
+            return
+            
+        editor.redo()
 
-    def execute(self) -> None:
-        pass
+@command("editor.clear_selection")
+class ClearSelectionCommand(Command):
+    """清除选择命令"""
+    
+    def execute(self, editor: Optional[Editor] = None) -> None:
+        if editor is None:
+            return
+            
+        editor.clear_selection()

@@ -75,13 +75,6 @@ class Plugin(ABC):
         """
         pass
 
-    def register_types(self) -> None:
-        """注册QML类型
-
-        在此处注册插件提供的QML类型
-        """
-        pass
-
 class PluginManager:
     """插件管理器"""
 
@@ -145,18 +138,6 @@ class PluginManager:
             self._logger.error(f"加载插件模块失败: {file_path} - {str(e)}")
         return None
 
-    def _process_plugin_class(self, attr: Any, plugin_id: str) -> None:
-        """处理插件类
-
-        Args:
-            attr: 要检查的属性
-            plugin_id: 插件ID
-        """
-        if (isinstance(attr, type) 
-            and issubclass(attr, Plugin) 
-            and attr != Plugin):
-            self._plugin_classes[plugin_id] = cast(Type[Plugin], attr)
-
     def _scan_directory(self, directory: Path) -> None:
         """扫描目录寻找插件
 
@@ -171,38 +152,13 @@ class PluginManager:
                         f"{item.name}.setup", 
                         setup_file
                     )
-                    if module:
-                        for attr_name in dir(module):
-                            attr = getattr(module, attr_name)
-                            try:
-                                if (isinstance(attr, type) 
-                                    and issubclass(attr, Plugin) 
-                                    and attr != Plugin):
-                                    # 创建临时实例以获取插件ID
-                                    plugin_class = cast(Type[Plugin], attr)
-                                    temp_instance = plugin_class(None)
-                                    plugin_id = temp_instance.id
-                                    self._plugin_classes[plugin_id] = plugin_class
-                            except Exception as e:
-                                self._logger.error(
-                                    f"处理插件类失败: {attr_name} in {setup_file} - {str(e)}"
-                                )
-
-            elif item.suffix == ".py" and not item.name.startswith("_"):
-                module = self._load_plugin_module(item.stem, item)
-                if module:
-                    for attr_name in dir(module):
-                        attr = getattr(module, attr_name)
+                    if module and hasattr(module, 'get_plugin_id') and hasattr(module, 'get_plugin_class'):
                         try:
-                            if (isinstance(attr, type) 
-                                and issubclass(attr, Plugin) 
-                                and attr != Plugin):
-                                # 创建临时实例以获取插件ID
-                                plugin_class = cast(Type[Plugin], attr)
-                                temp_instance = plugin_class(None)
-                                plugin_id = temp_instance.id
+                            plugin_id = module.get_plugin_id()
+                            plugin_class = module.get_plugin_class()
+                            if issubclass(plugin_class, Plugin) and plugin_class != Plugin:
                                 self._plugin_classes[plugin_id] = plugin_class
                         except Exception as e:
                             self._logger.error(
-                                f"处理插件类失败: {attr_name} in {item} - {str(e)}"
+                                f"加载插件失败: {setup_file} - {str(e)}"
                             )

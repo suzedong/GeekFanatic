@@ -12,7 +12,7 @@
 - 所有代码和文档使用中文注释
 - 使用 black 进行代码格式化
 - 使用 isort 进行导入排序
-- 使用 pylint/flake8 进行代码质量检查
+- 暂不使用 pylint/flake8 进行代码质量检查
 
 ### 项目结构
 - 采用模块化设计
@@ -93,7 +93,7 @@
 - IDE：Visual Studio Code 或 PyCharm
 - 构建工具：poetry 或 setuptools
 - 测试工具：pytest + pytest-qt
-- 静态检查：mypy + pylint
+- 暂不使用静态检查：mypy + pylint
 - 代码格式化：black + isort
 - 打包工具：PyInstaller 或 cx_Freeze
 

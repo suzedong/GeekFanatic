@@ -1,175 +1,192 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-编辑器基类实现
+编辑器核心实现模块
 """
 
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
-# pylint: disable=no-name-in-module,import-error
-from PySide6 import QtGui, QtWidgets
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QPlainTextEdit, QWidget
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QTextCursor
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QPlainTextEdit
 
+from .buffer import TextBuffer
+from .types import Position
 
-class Editor(QPlainTextEdit):
-    """编辑器控件基类"""
+class Editor(QWidget):
+    """编辑器核心类
+    
+    提供基础的文本编辑功能。
+    """
 
-    # 定义信号
-    cursorPositionChanged = Signal(int, int)  # 行号，列号
+    # 信号定义
+    contentChanged = Signal()  # 内容变更信号
+    selectionChanged = Signal()  # 选择变更信号
+    cursorPositionChanged = Signal(int, int)  # 光标位置变更信号
 
-    # 默认字体设置
-    DEFAULT_FONT_FAMILIES = ["Monaco", "Consolas", "Courier New"]
-    DEFAULT_FONT_SIZE = 14
-    DEFAULT_TAB_SIZE = 40
-
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
-        """初始化编辑器
-
-        Args:
-            parent: 父窗口部件
-        """
-        super().__init__(parent)
-        self._setup_editor()
-
-    def _setup_editor(self) -> None:
+    def __init__(self) -> None:
         """初始化编辑器"""
-        # 设置字体
-        self._setup_font()
-
-        # 设置其他属性
-        self.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
-        self.setBackgroundVisible(False)
-        self.setTabStopDistance(self.DEFAULT_TAB_SIZE)
-
-        # 连接信号
-        self.cursorPositionChanged.connect(self._handle_cursor_position_changed)
-
-    def _setup_font(self) -> None:
-        """设置编辑器字体
-
-        尝试按优先顺序设置可用的等宽字体
-        """
-        font = QFont()
+        super().__init__()
+        self._buffer = TextBuffer()  # 文本缓冲区
+        self._cursor_position = Position(0, 0)  # 当前光标位置
+        self._selection_start: Optional[Position] = None  # 选择起始位置
+        self._selection_end: Optional[Position] = None  # 选择结束位置
         
-        # 尝试设置字体族
-        for family in self.DEFAULT_FONT_FAMILIES:
-            font.setFamily(family)
-            if font.exactMatch():
-                break
+        # 创建UI
+        self._setup_ui()
+        self._connect_signals()
 
-        # 设置字体大小和等宽属性
-        font.setPointSize(self.DEFAULT_FONT_SIZE)
-        font.setFixedPitch(True)
+    def _setup_ui(self) -> None:
+        """设置UI"""
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
         
-        self.setFont(font)
+        self._text_edit = QPlainTextEdit()
+        self._text_edit.setLineWrapMode(QPlainTextEdit.NoWrap)
+        layout.addWidget(self._text_edit)
 
-    def _handle_cursor_position_changed(self) -> None:
-        """处理光标位置变化
+        # 设置样式
+        self._text_edit.setStyleSheet("""
+            QPlainTextEdit {
+                background-color: #1e1e1e;
+                color: #d4d4d4;
+                selection-background-color: #264f78;
+                selection-color: #ffffff;
+                font-family: 'Consolas';
+                font-size: 14px;
+                border: none;
+            }
+        """)
 
-        发送当前光标的行号和列号（从1开始计数）
-        """
-        try:
-            cursor = self.textCursor()
-            line = cursor.blockNumber() + 1
-            column = cursor.positionInBlock() + 1
-            self.cursorPositionChanged.emit(line, column)
-        except Exception as e:
-            # 在实际应用中，这里应该使用logger记录错误
-            print(f"Error handling cursor position change: {e}")
+    def _connect_signals(self) -> None:
+        """连接信号"""
+        self._text_edit.textChanged.connect(self._on_text_changed)
+        self._text_edit.selectionChanged.connect(self._on_selection_changed)
+        self._text_edit.cursorPositionChanged.connect(self._on_cursor_position_changed)
 
-    def set_font_size(self, size: int) -> None:
-        """设置字体大小
+    def _on_text_changed(self) -> None:
+        """处理文本变更"""
+        self._buffer.set_content(self._text_edit.toPlainText())
+        self.contentChanged.emit()
 
-        Args:
-            size: 字体大小（点数）
-        
-        该函数会验证字体大小是否在合理范围内（8-72点）。
-        如果大小无效，函数会静默返回而不做任何更改。
-        """
-        if size < 8 or size > 72:  # 添加合理的限制
-            return
-            
-        font = self.font()
-        font.setPointSize(size)
-        self.setFont(font)
+    def _on_selection_changed(self) -> None:
+        """处理选择变更"""
+        cursor = self._text_edit.textCursor()
+        if cursor.hasSelection():
+            start_pos = self._get_position(cursor.selectionStart())
+            end_pos = self._get_position(cursor.selectionEnd())
+            if start_pos and end_pos:
+                self._selection_start = start_pos
+                self._selection_end = end_pos
+        else:
+            self._selection_start = None
+            self._selection_end = None
+        self.selectionChanged.emit()
 
-    def set_tab_size(self, size: int) -> None:
-        """设置制表符宽度
+    def _on_cursor_position_changed(self) -> None:
+        """处理光标位置变更"""
+        cursor = self._text_edit.textCursor()
+        block = cursor.block()
+        line = block.blockNumber()
+        column = cursor.positionInBlock()
+        self._cursor_position = Position(line, column)
+        self.cursorPositionChanged.emit(line, column)
 
-        Args:
-            size: 制表符宽度（像素）
-
-        该函数会验证宽度是否为正数。
-        如果宽度无效，函数会静默返回而不做任何更改。
-        """
-        if size < 1:  # 确保宽度有效
-            return
-            
-        self.setTabStopDistance(size)
-
-    def get_cursor_position(self) -> Tuple[int, int]:
-        """获取当前光标位置
-
-        Returns:
-            Tuple[int, int]: (行号, 列号)，均从1开始计数
-        """
-        cursor = self.textCursor()
-        line = cursor.blockNumber() + 1
-        column = cursor.positionInBlock() + 1
-        return line, column
-
-    def set_cursor_position(self, line: int, column: int) -> bool:
-        """设置光标位置
-
-        Args:
-            line: 目标行号（从1开始）
-            column: 目标列号（从1开始）
-
-        Returns:
-            bool: 是否设置成功
-
-        该函数尝试将光标移动到指定位置。如果位置无效或发生错误，
-        将返回False并保持光标在原位置不变。
-        """
-        try:
-            cursor = self.textCursor()
-            cursor.movePosition(QtGui.QTextCursor.MoveOperation.Start)
-            
-            # 移动到指定行
-            for _ in range(line - 1):
-                if not cursor.movePosition(QtGui.QTextCursor.MoveOperation.NextBlock):
-                    return False
-            
-            # 移动到指定列
-            for _ in range(column - 1):
-                if not cursor.movePosition(QtGui.QTextCursor.MoveOperation.Right):
-                    return False
-                    
-            self.setTextCursor(cursor)
-            return True
-            
-        except Exception:
-            return False
-
-    def get_line_count(self) -> int:
-        """获取总行数
-
-        Returns:
-            int: 文档的总行数
-        """
-        return self.document().blockCount()
-
-    def get_line_text(self, line: int) -> Optional[str]:
-        """获取指定行的文本内容
-
-        Args:
-            line: 行号（从1开始）
-
-        Returns:
-            Optional[str]: 行文本内容，如果行号无效则返回 None
-        """
-        if line < 1 or line > self.get_line_count():
+    def _get_position(self, index: int) -> Optional[Position]:
+        """从文本索引获取位置"""
+        if index < 0:
             return None
             
-        block = self.document().findBlockByNumber(line - 1)
-        return block.text() if block.isValid() else None
+        text = self._text_edit.toPlainText()
+        if index > len(text):
+            return None
+            
+        # 计算行号和列号
+        text_before = text[:index]
+        line = text_before.count('\n')
+        if line == 0:
+            return Position(0, index)
+            
+        last_newline = text_before.rindex('\n')
+        column = index - last_newline - 1
+        return Position(line, column)
+
+    # 公共接口
+    def setPlainText(self, text: str) -> None:
+        """设置文本内容"""
+        self._text_edit.setPlainText(text)
+
+    def clear(self) -> None:
+        """清空内容"""
+        self._text_edit.clear()
+
+    @property
+    def content(self) -> str:
+        """获取编辑器内容"""
+        return self._buffer.get_content()
+
+    @content.setter
+    def content(self, text: str) -> None:
+        """设置编辑器内容"""
+        self._text_edit.setPlainText(text)
+
+    def get_cursor_position(self) -> Position:
+        """获取光标位置"""
+        return self._cursor_position
+
+    def set_cursor_position(self, position: Position) -> None:
+        """设置光标位置"""
+        cursor = self._text_edit.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+        for _ in range(position.line):
+            cursor.movePosition(QTextCursor.NextBlock)
+        cursor.movePosition(QTextCursor.Right, QTextCursor.MoveAnchor, position.column)
+        self._text_edit.setTextCursor(cursor)
+
+    def has_selection(self) -> bool:
+        """是否有选中内容"""
+        return self._text_edit.textCursor().hasSelection()
+
+    def get_selection(self) -> Optional[Tuple[Position, Position]]:
+        """获取选中区域"""
+        if not self.has_selection():
+            return None
+        if self._selection_start is None or self._selection_end is None:
+            return None
+        return (self._selection_start, self._selection_end)
+
+    def clear_selection(self) -> None:
+        """清除选中区域"""
+        cursor = self._text_edit.textCursor()
+        cursor.clearSelection()
+        self._text_edit.setTextCursor(cursor)
+
+    def insert_text(self, text: str) -> None:
+        """插入文本"""
+        self._text_edit.insertPlainText(text)
+
+    def delete_at_cursor(self) -> None:
+        """在光标位置删除字符"""
+        cursor = self._text_edit.textCursor()
+        cursor.deletePreviousChar()
+
+    def delete_selection(self) -> None:
+        """删除选中内容"""
+        if not self.has_selection():
+            return
+        selection = self.get_selection()
+        if selection is None:
+            return
+        start, end = selection
+        self._buffer.delete(start, end)
+        cursor = self._text_edit.textCursor()
+        cursor.removeSelectedText()
+
+    def undo(self) -> None:
+        """撤销操作"""
+        self._text_edit.undo()
+
+    def redo(self) -> None:
+        """重做操作"""
+        self._text_edit.redo()

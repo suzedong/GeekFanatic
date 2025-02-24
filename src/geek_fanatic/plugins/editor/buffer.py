@@ -1,136 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-文本缓冲区实现
+文本缓冲区实现模块
 """
 
-from dataclasses import dataclass
 from typing import List, Optional
 
-# pylint: disable=no-name-in-module,import-error
-from PySide6.QtCore import QObject, Signal
+from .types import Position, TextOperation, InsertOperation, DeleteOperation
 
-from geek_fanatic.plugins.editor.types import Position
-
-@dataclass
-class TextOperation:
-    """文本操作基类"""
-
-    start: Position
-    text: str
-
-    def apply(self, buffer: "TextBuffer") -> None:
-        """应用操作"""
-        raise NotImplementedError
-
-    def revert(self, buffer: "TextBuffer") -> None:
-        """撤销操作"""
-        raise NotImplementedError
-
-@dataclass
-class InsertOperation(TextOperation):
-    """插入操作"""
-
-    def apply(self, buffer: "TextBuffer") -> None:
-        """应用插入操作"""
-        lines = self.text.split("\n")
-        if len(lines) == 1:
-            # 单行插入
-            line = buffer._content[self.start.line]
-            new_line = line[: self.start.column] + self.text + line[self.start.column :]
-            buffer._content[self.start.line] = new_line
-        else:
-            # 多行插入
-            current_line = buffer._content[self.start.line]
-            first_line = current_line[: self.start.column] + lines[0]
-            last_line = lines[-1] + current_line[self.start.column :]
-
-            # 更新第一行和添加中间行
-            buffer._content[self.start.line] = first_line
-            for i, line in enumerate(lines[1:-1], 1):
-                buffer._content.insert(self.start.line + i, line)
-            buffer._content.insert(self.start.line + len(lines) - 1, last_line)
-
-    def revert(self, buffer: "TextBuffer") -> None:
-        """撤销插入操作"""
-        lines = self.text.split("\n")
-        if len(lines) == 1:
-            # 单行删除
-            line = buffer._content[self.start.line]
-            new_line = (
-                line[: self.start.column] + line[self.start.column + len(self.text) :]
-            )
-            buffer._content[self.start.line] = new_line
-        else:
-            # 多行删除
-            current_line = buffer._content[self.start.line]
-            last_line = buffer._content[self.start.line + len(lines) - 1]
-            new_line = current_line[: self.start.column] + last_line[len(lines[-1]) :]
-
-            # 删除中间行并更新第一行
-            for _ in range(len(lines) - 1):
-                buffer._content.pop(self.start.line + 1)
-            buffer._content[self.start.line] = new_line
-
-class DeleteOperation(TextOperation):
-    """删除操作"""
-
-    def __init__(self, start: Position, end: Position, deleted_text: str) -> None:
-        """初始化删除操作"""
-        super().__init__(start=start, text=deleted_text)
-        self.end = end
-
-    def apply(self, buffer: "TextBuffer") -> None:
-        """应用删除操作"""
-        if self.start.line == self.end.line:
-            # 单行删除
-            line = buffer._content[self.start.line]
-            new_line = line[: self.start.column] + line[self.end.column :]
-            buffer._content[self.start.line] = new_line
-        else:
-            # 多行删除，合并起始行和结束行
-            first_line = buffer._content[self.start.line]
-            last_line = buffer._content[self.end.line]
-
-            # 只保留起始行前半部分和结束行后半部分，直接拼接
-            # 不添加换行符，因为这是多行删除
-            new_line = first_line[: self.start.column] + last_line[self.end.column :]
-            buffer._content[self.start.line] = new_line
-
-            # 删除中间所有行（包括末行）
-            for _ in range(self.end.line - self.start.line):
-                buffer._content.pop(self.start.line + 1)
-
-    def revert(self, buffer: "TextBuffer") -> None:
-        """撤销删除操作"""
-        InsertOperation(self.start, self.text).apply(buffer)
-
-class TextBuffer(QObject):
-    """文本缓冲区实现"""
-
-    # 信号
-    contentChanged = Signal()
+class TextBuffer:
+    """文本缓冲区类
+    
+    提供基础的文本存储和操作功能。
+    """
 
     def __init__(self) -> None:
         """初始化缓冲区"""
-        super().__init__()
-        self._content: List[str] = [""]
-        self._undo_stack: List[TextOperation] = []
-        self._redo_stack: List[TextOperation] = []
+        self._content: List[str] = [""]  # 按行存储的内容
+        self._undo_stack: List[TextOperation] = []  # 撤销栈
+        self._redo_stack: List[TextOperation] = []  # 重做栈
 
     def get_content(self) -> str:
-        """获取缓冲区内容"""
+        """获取完整内容"""
         return "\n".join(self._content)
 
-    def set_content(self, content: str) -> None:
-        """设置缓冲区内容"""
-        self._content = content.split("\n")
+    def set_content(self, text: str) -> None:
+        """设置完整内容"""
+        self._content = text.split("\n")
         self._undo_stack.clear()
         self._redo_stack.clear()
-        self.contentChanged.emit()
 
-    def get_line(self, line: int) -> str:
-        """获取指定行内容"""
-        if 0 <= line < len(self._content):
-            return self._content[line]
+    def get_line(self, line_number: int) -> str:
+        """获取指定行的内容"""
+        if 0 <= line_number < len(self._content):
+            return self._content[line_number]
         return ""
 
     def get_line_count(self) -> int:
@@ -138,64 +42,131 @@ class TextBuffer(QObject):
         return len(self._content)
 
     def insert(self, position: Position, text: str) -> None:
-        """插入文本"""
+        """插入文本
+        
+        Args:
+            position: 插入位置
+            text: 要插入的文本
+        """
         operation = InsertOperation(position, text)
         self._execute_operation(operation)
+        self._undo_stack.append(operation)
+        self._redo_stack.clear()
 
     def delete(self, start: Position, end: Position) -> None:
-        """删除文本"""
+        """删除文本
+        
+        Args:
+            start: 起始位置
+            end: 结束位置
+        """
+        # 确保起始位置在结束位置之前
+        if (start.line > end.line or 
+            (start.line == end.line and start.column > end.column)):
+            start, end = end, start
+
         # 获取要删除的文本
         deleted_text = self._get_text(start, end)
         operation = DeleteOperation(start, end, deleted_text)
         self._execute_operation(operation)
+        self._undo_stack.append(operation)
+        self._redo_stack.clear()
+
+    def undo(self) -> bool:
+        """撤销操作
+        
+        Returns:
+            bool: 是否成功撤销
+        """
+        if not self._undo_stack:
+            return False
+
+        operation = self._undo_stack.pop()
+        reversed_operation = operation.reverse()
+        self._execute_operation(reversed_operation)
+        self._redo_stack.append(operation)
+        return True
+
+    def redo(self) -> bool:
+        """重做操作
+        
+        Returns:
+            bool: 是否成功重做
+        """
+        if not self._redo_stack:
+            return False
+
+        operation = self._redo_stack.pop()
+        self._execute_operation(operation)
+        self._undo_stack.append(operation)
+        return True
+
+    def _execute_operation(self, operation: TextOperation) -> None:
+        """执行文本操作
+        
+        Args:
+            operation: 要执行的操作
+        """
+        if isinstance(operation, InsertOperation):
+            self._insert_text(operation.position, operation.text)
+        elif isinstance(operation, DeleteOperation):
+            self._delete_text(operation.start, operation.end)
+
+    def _insert_text(self, position: Position, text: str) -> None:
+        """在指定位置插入文本"""
+        if not text:
+            return
+
+        # 处理多行插入
+        lines = text.split("\n")
+        current_line = self._content[position.line]
+        
+        if len(lines) == 1:
+            # 单行插入
+            new_line = (current_line[:position.column] + 
+                       text + 
+                       current_line[position.column:])
+            self._content[position.line] = new_line
+        else:
+            # 多行插入
+            first_line = current_line[:position.column] + lines[0]
+            last_line = lines[-1] + current_line[position.column:]
+            
+            # 替换当前行并插入新行
+            self._content[position.line] = first_line
+            self._content[position.line + 1:position.line + 1] = lines[1:-1]
+            self._content.insert(position.line + len(lines) - 1, last_line)
+
+    def _delete_text(self, start: Position, end: Position) -> None:
+        """删除指定范围的文本"""
+        if start.line == end.line:
+            # 单行删除
+            line = self._content[start.line]
+            new_line = line[:start.column] + line[end.column:]
+            self._content[start.line] = new_line
+        else:
+            # 多行删除
+            first_line = self._content[start.line][:start.column]
+            last_line = self._content[end.line][end.column:]
+            
+            # 合并首尾行
+            self._content[start.line] = first_line + last_line
+            # 删除中间行
+            del self._content[start.line + 1:end.line + 1]
 
     def _get_text(self, start: Position, end: Position) -> str:
         """获取指定范围的文本"""
         if start.line == end.line:
-            # 单行
-            line = self._content[start.line]
-            return line[start.column : end.column]
-        else:
-            # 多行
-            lines = []
-            # 第一行
-            first_line = self._content[start.line][start.column :]
-            lines.append(first_line)
-
-            # 中间行
-            for i in range(start.line + 1, end.line):
-                lines.append(self._content[i])
-
-            # 最后一行
-            last_line = self._content[end.line][: end.column]
-            if last_line:
-                lines.append(last_line)
-
-            return "\n".join(lines)
-
-    def _execute_operation(self, operation: TextOperation) -> None:
-        """执行操作"""
-        operation.apply(self)
-        self._undo_stack.append(operation)
-        self._redo_stack.clear()
-        self.contentChanged.emit()
-
-    def undo(self) -> None:
-        """撤销操作"""
-        if not self._undo_stack:
-            return
-
-        operation = self._undo_stack.pop()
-        operation.revert(self)
-        self._redo_stack.append(operation)
-        self.contentChanged.emit()
-
-    def redo(self) -> None:
-        """重做操作"""
-        if not self._redo_stack:
-            return
-
-        operation = self._redo_stack.pop()
-        operation.apply(self)
-        self._undo_stack.append(operation)
-        self.contentChanged.emit()
+            # 单行文本
+            return self._content[start.line][start.column:end.column]
+        
+        # 多行文本
+        result = []
+        # 第一行
+        result.append(self._content[start.line][start.column:])
+        # 中间行
+        result.extend(self._content[start.line + 1:end.line])
+        # 最后一行
+        result.append(self._content[end.line][:end.column])
+        
+        return "\n".join(result)
