@@ -11,6 +11,9 @@ from typing import Dict, List, Optional, Type, Any, cast, Protocol, runtime_chec
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget
 
+# 配置日志
+logging.basicConfig(level=logging.DEBUG)
+
 @runtime_checkable
 class IDEProtocol(Protocol):
     """IDE 接口协议"""
@@ -124,6 +127,7 @@ class PluginManager:
             ide: IDE实例
         """
         self._ide = ide
+        self._logger.info("IDE实例已设置")
 
     def add_plugin_directory(self, directory: Path) -> None:
         """添加插件目录
@@ -133,6 +137,7 @@ class PluginManager:
         """
         if directory.is_dir() and directory not in self._plugin_dirs:
             self._plugin_dirs.append(directory)
+            self._logger.info(f"添加插件目录: {directory}")
 
     def discover_plugins(self) -> List[Type[Plugin]]:
         """发现插件
@@ -140,8 +145,10 @@ class PluginManager:
         Returns:
             List[Type[Plugin]]: 发现的插件类列表
         """
+        self._logger.info("开始扫描插件...")
         for plugin_dir in self._plugin_dirs:
             self._scan_directory(plugin_dir)
+        self._logger.info(f"发现插件: {list(self._plugin_classes.keys())}")
         return list(self._plugin_classes.values())
 
     def get_plugin_class(self, plugin_id: str) -> Optional[Type[Plugin]]:
@@ -153,7 +160,9 @@ class PluginManager:
         Returns:
             Optional[Type[Plugin]]: 对应的插件类，如果不存在则返回None
         """
-        return self._plugin_classes.get(plugin_id)
+        plugin_class = self._plugin_classes.get(plugin_id)
+        self._logger.debug(f"获取插件类 {plugin_id}: {'成功' if plugin_class else '失败'}")
+        return plugin_class
 
     def _load_plugin(self, plugin_class: Type[Plugin]) -> None:
         """加载单个插件
@@ -161,16 +170,26 @@ class PluginManager:
         Args:
             plugin_class: 插件类
         """
-        plugin = plugin_class(self._ide)
-        plugin_id = plugin.id
+        try:
+            self._logger.info(f"正在加载插件: {plugin_class.__name__}")
+            plugin = plugin_class(self._ide)
+            plugin_id = plugin.id
 
-        # 获取并注册插件视图
-        views = plugin.get_views()
-        if hasattr(self._ide, 'layout'):
-            self._ide.layout.register_plugin_views(plugin_id, views)
+            # 获取并注册插件视图
+            views = plugin.get_views()
+            if hasattr(self._ide, 'layout'):
+                self._ide.layout.register_plugin_views(plugin_id, views)
+                self._logger.info(f"插件视图注册成功: {plugin_id}")
+            else:
+                self._logger.warning(f"IDE实例缺少layout属性，无法注册插件视图: {plugin_id}")
 
-        # 初始化插件
-        plugin.initialize()
+            # 初始化插件
+            plugin.initialize()
+            self._logger.info(f"插件初始化完成: {plugin_id}")
+        except Exception as e:
+            self._logger.error(f"加载插件失败: {plugin_class.__name__} - {str(e)}")
+            import traceback
+            self._logger.error(traceback.format_exc())
 
     def _load_plugin_module(
         self, 
@@ -187,13 +206,17 @@ class PluginManager:
             Optional[Any]: 加载的模块，如果加载失败则返回None
         """
         try:
+            self._logger.debug(f"正在加载模块: {file_path}")
             spec = importlib.util.spec_from_file_location(spec_name, file_path)
             if spec is not None and spec.loader is not None:
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
+                self._logger.debug(f"模块加载成功: {file_path}")
                 return module
         except Exception as e:
             self._logger.error(f"加载插件模块失败: {file_path} - {str(e)}")
+            import traceback
+            self._logger.error(traceback.format_exc())
         return None
 
     def _scan_directory(self, directory: Path) -> None:
@@ -202,10 +225,12 @@ class PluginManager:
         Args:
             directory: 要扫描的目录
         """
+        self._logger.info(f"扫描目录: {directory}")
         for item in directory.iterdir():
             if item.is_dir() and not item.name.startswith("_"):
                 setup_file = item / "setup.py"
                 if setup_file.exists():
+                    self._logger.debug(f"发现setup.py: {setup_file}")
                     module = self._load_plugin_module(
                         f"{item.name}.setup", 
                         setup_file
@@ -216,7 +241,10 @@ class PluginManager:
                             plugin_class = module.get_plugin_class()
                             if issubclass(plugin_class, Plugin) and plugin_class != Plugin:
                                 self._plugin_classes[plugin_id] = plugin_class
+                                self._logger.info(f"注册插件: {plugin_id}")
                         except Exception as e:
                             self._logger.error(
                                 f"加载插件失败: {setup_file} - {str(e)}"
                             )
+                            import traceback
+                            self._logger.error(traceback.format_exc())

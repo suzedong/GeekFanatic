@@ -3,7 +3,8 @@
 """
 
 from typing import Dict, Optional
-from PySide6.QtCore import Signal
+
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -76,86 +77,37 @@ class WorkArea(QWidget):
         Args:
             views: 插件视图字典
         """
+        # 如果已经显示了这些视图，不需要重新创建
+        if all(view_id in self._current_views for view_id in views):
+            return
+
         # 清除当前视图
         self.clear()
 
-        # 添加新视图
+        # 创建新的标签页组
+        tab_widget = QTabWidget()
+        tab_widget.setTabsClosable(True)
+        tab_widget.setMovable(True)
+        tab_widget.tabCloseRequested.connect(self._on_tab_close_requested)
+
+        # 添加视图到标签页
         for view_id, view in views.items():
-            if isinstance(view, QTabWidget):
-                # 如果是标签页组，直接添加
-                self._stack.addWidget(view)
-                self._current_views[view_id] = view
-            else:
-                # 否则创建新的标签页组
-                tab_widget = QTabWidget()
-                tab_widget.setTabsClosable(True)
-                tab_widget.setMovable(True)
-                tab_widget.addTab(view, view.windowTitle() or "未命名")
-                tab_widget.tabCloseRequested.connect(self._on_tab_close_requested)
+            # 保存视图引用
+            self._current_views[view_id] = view
+            # 添加到标签页
+            tab_widget.addTab(view, view.windowTitle() or "未命名")
 
-                self._stack.addWidget(tab_widget)
-                self._current_views[view_id] = tab_widget
-
-        # 显示第一个视图
-        if self._current_views:
-            first_view_id = next(iter(self._current_views))
-            self.set_current_view(first_view_id)
+        # 添加标签页组到堆栈
+        self._stack.addWidget(tab_widget)
+        self._stack.setCurrentWidget(tab_widget)
 
     def clear(self) -> None:
         """清除所有视图"""
+        # 移除所有视图但不删除它们
         while self._stack.count():
-            self._stack.removeWidget(self._stack.widget(0))
-        self._current_views.clear()
-        self._current_view_id = None
-
-    def set_current_view(self, view_id: str) -> None:
-        """设置当前视图
-
-        Args:
-            view_id: 视图ID
-        """
-        if view_id in self._current_views:
-            view = self._current_views[view_id]
-            self._stack.setCurrentWidget(view)
-            self._current_view_id = view_id
-            self.viewChanged.emit(view_id)
-
-    def get_current_view(self) -> Optional[QWidget]:
-        """获取当前视图
-
-        Returns:
-            Optional[QWidget]: 当前视图，如果没有则返回None
-        """
-        if self._current_view_id:
-            return self._current_views.get(self._current_view_id)
-        return None
-
-    def add_tab(self, group_id: str, tab: WorkTab) -> None:
-        """添加标签页到指定组
-
-        Args:
-            group_id: 标签页组ID
-            tab: 标签页
-        """
-        if group_id in self._current_views:
-            tab_widget = self._current_views[group_id]
-            if isinstance(tab_widget, QTabWidget):
-                tab_widget.addTab(tab, tab.title)
-                tab_widget.setCurrentWidget(tab)
-
-    def remove_tab(self, group_id: str, tab: WorkTab) -> None:
-        """从指定组移除标签页
-
-        Args:
-            group_id: 标签页组ID
-            tab: 标签页
-        """
-        if group_id in self._current_views:
-            tab_widget = self._current_views[group_id]
-            if isinstance(tab_widget, QTabWidget):
-                index = tab_widget.indexOf(tab)
-                if index != -1:
-                    tab_widget.removeTab(index)
+            widget = self._stack.widget(0)
+            self._stack.removeWidget(widget)
+            widget.setParent(None)  # 取消父子关系但不删除
 
     def _on_tab_close_requested(self, index: int) -> None:
         """处理标签页关闭请求
@@ -163,6 +115,10 @@ class WorkArea(QWidget):
         Args:
             index: 标签页索引
         """
-        tab_widget = self.sender()
+        tab_widget = self._stack.currentWidget()
         if isinstance(tab_widget, QTabWidget):
+            # 移除标签页但不删除视图
+            widget = tab_widget.widget(index)
             tab_widget.removeTab(index)
+            if widget:
+                widget.setParent(None)  # 取消父子关系但不删除

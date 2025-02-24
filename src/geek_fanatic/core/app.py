@@ -4,6 +4,7 @@ GeekFanatic 核心应用模块
 
 from pathlib import Path
 from typing import Dict, Type
+import logging
 
 from PySide6.QtCore import QObject, Signal, Slot
 
@@ -27,9 +28,12 @@ class GeekFanatic(QObject):
     def __init__(self) -> None:
         """初始化应用程序核心实例"""
         super().__init__()
+        self._logger = logging.getLogger(__name__)
 
         # 初始化核心管理器
         self._plugin_manager = PluginManager()
+        self._plugin_manager.set_ide(self)
+        
         self._theme_manager = ThemeManager()
         self._window_manager = WindowManager()
         self._command_registry = CommandRegistry()
@@ -53,25 +57,61 @@ class GeekFanatic(QObject):
 
     def initialize_plugins(self) -> None:
         """初始化插件系统"""
+        if not self._layout:
+            raise RuntimeError("Layout must be set before initializing plugins")
+            
+        self._logger.info("开始初始化插件系统...")
+            
         # 扫描并加载插件
         discovered_plugins = self._plugin_manager.discover_plugins()
+        self._logger.info(f"发现 {len(discovered_plugins)} 个插件")
+        
         for plugin_class in discovered_plugins:
             self._load_plugin(plugin_class)
 
         # 加载内置插件
         self._ensure_builtin_plugins()
+        
+        self._logger.info("插件系统初始化完成")
 
     def _load_plugin(self, plugin_class: Type[Plugin]) -> None:
         """加载单个插件"""
-        plugin = plugin_class(self)
-        plugin_id = plugin.id
+        try:
+            self._logger.info(f"正在加载插件: {plugin_class.__name__}")
+            plugin = plugin_class(self)
+            plugin_id = plugin.id
 
-        if plugin_id in self._plugins:
-            return
+            if plugin_id in self._plugins:
+                self._logger.debug(f"插件已加载，跳过: {plugin_id}")
+                return
 
-        self._plugins[plugin_id] = plugin
-        plugin.initialize()
-        self.pluginLoaded.emit(plugin_id)
+            # 获取并注册插件视图
+            views = plugin.get_views()
+            self._logger.debug(f"获取插件视图: {plugin_id}")
+            
+            if views.activity_icon:
+                self._logger.debug(f"插件 {plugin_id} 包含活动栏图标")
+            
+            if views.side_views:
+                self._logger.debug(f"插件 {plugin_id} 包含侧边栏视图: {list(views.side_views.keys())}")
+            
+            if views.work_views:
+                self._logger.debug(f"插件 {plugin_id} 包含工作区视图: {list(views.work_views.keys())}")
+
+            # 注册视图
+            self._layout.register_plugin_views(plugin_id, views)
+            self._logger.info(f"插件视图注册成功: {plugin_id}")
+
+            # 初始化插件
+            self._plugins[plugin_id] = plugin
+            plugin.initialize()
+            self.pluginLoaded.emit(plugin_id)
+            self._logger.info(f"插件加载完成: {plugin_id}")
+            
+        except Exception as e:
+            self._logger.error(f"加载插件失败: {plugin_class.__name__} - {str(e)}")
+            import traceback
+            self._logger.error(traceback.format_exc())
 
     def _ensure_builtin_plugins(self) -> None:
         """确保内置插件被加载"""
@@ -81,9 +121,12 @@ class GeekFanatic(QObject):
 
         for plugin_id in builtin_plugins:
             if not self.is_plugin_loaded(plugin_id):
+                self._logger.info(f"加载内置插件: {plugin_id}")
                 plugin_class = self._plugin_manager.get_plugin_class(plugin_id)
                 if plugin_class:
                     self._load_plugin(plugin_class)
+                else:
+                    self._logger.warning(f"未找到内置插件: {plugin_id}")
 
     @Slot(str)
     def set_theme(self, theme_name: str) -> None:

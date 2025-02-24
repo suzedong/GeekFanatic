@@ -4,7 +4,7 @@
 
 from typing import List, Optional
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QWidget,
@@ -32,6 +32,7 @@ class ActivityBarItem(QPushButton):
         """
         super().__init__(parent)
         self.setIcon(icon)
+        self.setIconSize(QSize(24, 24))  # 修正：使用 QSize 而不是 Qt.QSize
         self.setToolTip(tooltip)
         self.setCheckable(True)
         self.setFixedSize(48, 48)
@@ -48,6 +49,7 @@ class ActivityBarItem(QPushButton):
             }
             QPushButton:checked {
                 background: rgba(255, 255, 255, 0.2);
+                border-left: 2px solid #fff;
             }
         """)
 
@@ -136,6 +138,10 @@ class ActivityBar(QWidget):
         else:
             self._items.append(item)
             self._top_layout.addWidget(item)
+            
+        # 如果是第一个项目，设置为活动项
+        if not self._active_item:
+            self.set_active_item(item_id)
 
     def _on_item_clicked(self, item: ActivityBarItem) -> None:
         """处理项目点击事件"""

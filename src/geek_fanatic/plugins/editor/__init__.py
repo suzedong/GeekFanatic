@@ -19,6 +19,9 @@ from .editor import Editor
 from .file_explorer import FileExplorer
 from .commands.basic import DeleteCommand, RedoCommand, UndoCommand
 
+# 导入资源文件
+import geek_fanatic.resources.resources_rc
+
 class EditorManager(QWidget):
     """编辑器管理器"""
     
@@ -123,9 +126,8 @@ class EditorPlugin(Plugin):
         views = PluginViews()
         
         # 活动栏图标
-        icons_dir = Path(__file__).parent.parent.parent / "resources" / "icons"
         views.activity_icon = ActivityIcon(
-            icon=QIcon(str(icons_dir / "explorer.svg")),
+            icon=QIcon(":/icons/explorer.svg"),  # 修改资源路径
             tooltip=self.name
         )
         

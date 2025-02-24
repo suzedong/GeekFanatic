@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RCC>
+    <qresource>
+        <file alias="icons/explorer.svg">icons/explorer.svg</file>
+    </qresource>
+</RCC>

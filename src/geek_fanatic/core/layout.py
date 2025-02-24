@@ -28,7 +28,7 @@ class Layout:
             window: 主窗口实例
         """
         self._window = window
-        self._plugin_views: Dict[str, Dict[str, QWidget]] = {}  # 存储插件视图
+        self._plugin_views: Dict[str, PluginViews] = {}  # 存储插件视图
         self._current_plugin: Optional[str] = None
         self._setup_layout()
 
@@ -85,6 +85,9 @@ class Layout:
             plugin_id: 插件ID
             views: 插件视图集合
         """
+        # 保存视图引用
+        self._plugin_views[plugin_id] = views
+        
         # 注册活动栏图标
         if views.activity_icon:
             self._activity_bar.add_item(
@@ -93,11 +96,9 @@ class Layout:
                 views.activity_icon.tooltip
             )
             
-        # 存储插件视图
-        self._plugin_views[plugin_id] = {
-            'side': views.side_views,
-            'work': views.work_views
-        }
+        # 如果是第一个插件，自动显示它的视图
+        if len(self._plugin_views) == 1:
+            self.switch_plugin(plugin_id)
 
     def switch_plugin(self, plugin_id: str) -> None:
         """切换到指定插件
@@ -112,14 +113,17 @@ class Layout:
         
         # 更新侧边栏
         self._side_bar.clear()
-        for view in views['side'].values():
+        for view_id, view in views.side_views.items():
             self._side_bar.add_view(view)
             
         # 更新工作区
-        if views['work']:
-            self._work_area.switch_to_plugin_views(views['work'])
+        if views.work_views:
+            self._work_area.switch_to_plugin_views(views.work_views)
             
         self._current_plugin = plugin_id
+        
+        # 更新活动栏状态
+        self._activity_bar.set_active_item(plugin_id)
 
     def _on_activity_item_clicked(self, item_id: str) -> None:
         """处理活动栏项目点击
