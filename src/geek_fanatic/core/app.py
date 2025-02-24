@@ -89,8 +89,8 @@ class GeekFanatic(QObject):
             views = plugin.get_views()
             self._logger.debug(f"获取插件视图: {plugin_id}")
             
-            if views.activity_icon:
-                self._logger.debug(f"插件 {plugin_id} 包含活动栏图标")
+            if views.activity_icons:
+                self._logger.debug(f"插件 {plugin_id} 包含活动栏图标列表: {[icon.id for icon in views.activity_icons]}")
             
             if views.side_views:
                 self._logger.debug(f"插件 {plugin_id} 包含侧边栏视图: {list(views.side_views.keys())}")

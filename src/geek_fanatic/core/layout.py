@@ -89,16 +89,19 @@ class Layout:
         self._plugin_views[plugin_id] = views
         
         # 注册活动栏图标
-        if views.activity_icon:
+        for icon in views.activity_icons:
             self._activity_bar.add_item(
-                plugin_id,
-                views.activity_icon.icon,
-                views.activity_icon.tooltip
+                icon.id,
+                icon.icon,
+                icon.tooltip,
+                icon.bottom
             )
             
         # 如果是第一个插件，自动显示它的视图
         if len(self._plugin_views) == 1:
-            self.switch_plugin(plugin_id)
+            # 使用第一个活动栏图标的 ID
+            if views.activity_icons:
+                self.switch_plugin(views.activity_icons[0].id)
 
     def switch_plugin(self, plugin_id: str) -> None:
         """切换到指定插件

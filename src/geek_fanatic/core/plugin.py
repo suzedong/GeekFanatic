@@ -21,21 +21,25 @@ class IDEProtocol(Protocol):
 
 class ActivityIcon:
     """活动栏图标配置"""
-    def __init__(self, icon: QIcon, tooltip: str):
+    def __init__(self, id: str, icon: QIcon, tooltip: str, bottom: bool = False):
         """初始化活动栏图标
 
         Args:
+            id: 图标唯一标识
             icon: 图标
             tooltip: 提示文本
+            bottom: 是否显示在底部
         """
+        self.id = id
         self.icon = icon
         self.tooltip = tooltip
+        self.bottom = bottom
 
 class PluginViews:
     """插件视图集合"""
     def __init__(self):
         """初始化插件视图集合"""
-        self.activity_icon: Optional[ActivityIcon] = None  # 活动栏图标
+        self.activity_icons: List[ActivityIcon] = []      # 活动栏图标列表
         self.side_views: Dict[str, QWidget] = {}          # 侧边栏视图
         self.work_views: Dict[str, QWidget] = {}          # 工作区视图
 

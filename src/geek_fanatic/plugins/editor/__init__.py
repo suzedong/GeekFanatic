@@ -1,4 +1,4 @@
-"""
+﻿"""
 编辑器插件入口模块
 """
 
@@ -22,6 +22,13 @@ from .commands.basic import DeleteCommand, RedoCommand, UndoCommand
 # 导入资源文件
 import geek_fanatic.resources.resources_rc
 
+def load_icon(name: str) -> QIcon:
+    """加载图标"""
+    icon = QIcon(f":/icons/{name}.svg")
+    if icon.isNull():
+        print(f"图标加载失败: {name}")
+    return icon
+
 class EditorManager(QWidget):
     """编辑器管理器"""
     
@@ -44,37 +51,26 @@ class EditorManager(QWidget):
         self._layout.addWidget(self._tab_widget)
     
     def open_file(self, file_path: str) -> None:
-        """打开文件
-        
-        Args:
-            file_path: 文件路径
-        """
-        # 如果文件已经打开，切换到对应标签
+        """打开文件"""
         if file_path in self._editors:
             editor = self._editors[file_path]
             self._tab_widget.setCurrentWidget(editor)
             return
-            
-        # 创建新编辑器
+        
         editor = Editor()
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 editor.setPlainText(f.read())
         except Exception as e:
             print(f"Error loading file: {e}")
             return
-            
-        # 添加到标签页
+        
         self._editors[file_path] = editor
         self._tab_widget.addTab(editor, Path(file_path).name)
         self._tab_widget.setCurrentWidget(editor)
     
     def _on_tab_close_requested(self, index: int) -> None:
-        """处理标签页关闭请求
-        
-        Args:
-            index: 标签页索引
-        """
+        """处理标签页关闭请求"""
         editor = self._tab_widget.widget(index)
         for path, ed in self._editors.items():
             if ed == editor:
@@ -91,7 +87,7 @@ class IDEProtocol:
 
 class EditorPlugin(Plugin):
     """编辑器插件实现"""
-
+    
     def __init__(self, ide: Optional[IDEProtocol]) -> None:
         """初始化插件"""
         super().__init__(ide)
@@ -100,45 +96,48 @@ class EditorPlugin(Plugin):
         self._ide_impl = ide
         self._file_explorer = FileExplorer()
         self._editor_manager = EditorManager()
-
+    
     @property
     def id(self) -> str:
         """获取插件ID"""
         return "geekfanatic.editor"
-
+    
     @property
     def name(self) -> str:
         """获取插件名称"""
         return "编辑器"
-
+    
     @property
     def version(self) -> str:
         """获取插件版本"""
         return "1.0.0"
-
+    
     @property
     def description(self) -> str:
         """获取插件描述"""
         return "提供基础的文本编辑功能"
-
+    
     def get_views(self) -> PluginViews:
         """获取插件视图"""
         views = PluginViews()
         
         # 活动栏图标
-        views.activity_icon = ActivityIcon(
-            icon=QIcon(":/icons/explorer.svg"),  # 修改资源路径
-            tooltip=self.name
-        )
+        views.activity_icons = [
+            ActivityIcon(
+                id="explorer",
+                icon=load_icon("explorer"),
+                tooltip="文件资源管理器"
+            )
+        ]
         
-        # 侧边栏文件浏览器
+        # 侧边栏视图
         views.side_views["explorer"] = self._file_explorer
         
         # 工作区编辑器
         views.work_views["editor"] = self._editor_manager
         
         return views
-
+    
     def initialize(self) -> None:
         """初始化插件"""
         super().initialize()
@@ -151,7 +150,7 @@ class EditorPlugin(Plugin):
         
         # 连接信号
         self._connect_signals()
-
+    
     def _register_commands(self) -> None:
         """注册编辑器命令"""
         commands = [
@@ -159,10 +158,10 @@ class EditorPlugin(Plugin):
             UndoCommand(),
             RedoCommand(),
         ]
-
+        
         for command in commands:
             self._ide_impl.command_registry.register(command)
-
+    
     def _register_configuration(self) -> None:
         """注册编辑器配置"""
         config = {
@@ -193,19 +192,16 @@ class EditorPlugin(Plugin):
             }
         }
         self._ide_impl.config_registry.register(config)
-
+    
     def _connect_signals(self) -> None:
         """连接信号"""
         # 监听文件浏览器的文件选择
         self._file_explorer.fileSelected.connect(self._on_file_selected)
-
+    
     def _on_file_selected(self, file_path: str) -> None:
-        """处理文件选择事件
-        
-        Args:
-            file_path: 文件路径
-        """
+        """处理文件选择事件"""
         self._editor_manager.open_file(file_path)
+    
 
     def cleanup(self) -> None:
         """清理插件"""

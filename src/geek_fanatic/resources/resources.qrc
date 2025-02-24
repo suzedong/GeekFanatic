@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RCC>
-    <qresource>
-        <file alias="icons/explorer.svg">icons/explorer.svg</file>
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/icons">
+        <file>explorer.svg</file>
+        <file>search.svg</file>
+        <file>git.svg</file>
+        <file>debug.svg</file>
+        <file>extensions.svg</file>
+        <file>settings.svg</file>
     </qresource>
 </RCC>
