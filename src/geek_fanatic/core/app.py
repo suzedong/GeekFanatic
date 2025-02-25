@@ -34,18 +34,21 @@ class GeekFanatic(QObject):
         self._plugin_manager = PluginManager()
         self._plugin_manager.set_GF(self)
         
+        # 初始化各个管理器
         self._theme_manager = ThemeManager()
         self._window_manager = WindowManager()
         self._command_registry = CommandRegistry()
         self._config_registry = ConfigRegistry()
         self._view_registry = ViewRegistry()
-        self._layout: Layout = None
-
-        # 插件注册表
-        self._plugins: Dict[str, Plugin] = {}
-
+        
         # 注册默认插件目录
         self._register_default_plugin_dirs()
+        
+        # 初始化布局管理器（需要在窗口创建后设置）
+        self._layout: Layout = None
+        
+        # 插件注册表
+        self._plugins: Dict[str, Plugin] = {}
 
     def _register_default_plugin_dirs(self) -> None:
         """注册默认插件目录"""
@@ -201,6 +204,10 @@ class GeekFanatic(QObject):
         """获取布局管理器"""
         return self._layout
 
-    def set_layout(self, layout: Layout) -> None:
-        """设置布局管理器"""
-        self._layout = layout
+    def set_layout(self, window: 'QMainWindow') -> None:
+        """设置布局管理器
+        
+        Args:
+            window: 主窗口实例
+        """
+        self._layout = Layout(window, self._view_registry)

@@ -6,9 +6,9 @@ from typing import Dict, Optional
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QMainWindow, 
-    QWidget, 
-    QHBoxLayout, 
+    QMainWindow,
+    QWidget,
+    QHBoxLayout,
     QSplitter,
     QStackedWidget
 )
@@ -17,18 +17,20 @@ from .widgets.activity_bar import ActivityBar
 from .widgets.side_bar import SideBar
 from .widgets.work_area import WorkArea
 from .plugin import PluginViews
+from .view import ViewRegistry, ViewInfo, ViewType
 
 class Layout:
     """布局管理器，负责管理主窗口的整体布局结构"""
 
-    def __init__(self, window: QMainWindow) -> None:
+    def __init__(self, window: QMainWindow, view_registry: ViewRegistry) -> None:
         """初始化布局管理器
 
         Args:
             window: 主窗口实例
+            view_registry: 视图注册表实例
         """
         self._window = window
-        self._plugin_views: Dict[str, PluginViews] = {}  # 存储插件视图
+        self._view_registry = view_registry
         self._current_plugin: Optional[str] = None
         self._setup_layout()
 
@@ -72,7 +74,7 @@ class Layout:
 
     def _connect_signals(self) -> None:
         """连接信号"""
-        # 活动栏项目点击时显示对应的插件视图
+        # 活动栏项目点击时显示对应的视图
         self._activity_bar.itemClicked.connect(self._on_activity_item_clicked)
         
         # 侧边栏视图变更时更新活动栏状态
@@ -85,11 +87,23 @@ class Layout:
             plugin_id: 插件ID
             views: 插件视图集合
         """
-        # 保存视图引用
-        self._plugin_views[plugin_id] = views
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"正在注册插件视图: {plugin_id}")
         
         # 注册活动栏图标
         for icon in views.activity_icons:
+            logger.info(f"注册活动栏图标: {icon.id}")
+            
+            # 注册到 ViewRegistry
+            self._view_registry.register_view(
+                icon.id,
+                icon.tooltip,
+                icon.icon,
+                priority=0 if not icon.bottom else -1
+            )
+            
+            # 添加到活动栏
             self._activity_bar.add_item(
                 icon.id,
                 icon.icon,
@@ -97,61 +111,84 @@ class Layout:
                 icon.bottom
             )
             
+        # 注册侧边栏视图
+        for view_id, component in views.side_views.items():
+            logger.info(f"注册侧边栏视图: {view_id}")
+            
+            # 注册侧边栏视图组件
+            self._view_registry.register_view(
+                view_id,  # 不再使用 .side 后缀
+                view_id,  # 使用相同的 ID 作为标题
+                component
+            )
+            
+        # 注册工作区视图
+        for view_id, component in views.work_views.items():
+            logger.info(f"注册工作区视图: {view_id}")
+            
+            self._view_registry.register_view(
+                view_id,  # 不再使用 .work 后缀
+                view_id,
+                component
+            )
+            
         # 如果是第一个插件，自动显示它的视图
-        if len(self._plugin_views) == 1:
-            print(f"正在切换到第一个插件: {plugin_id}")
-            # 使用插件ID切换
-            self.switch_plugin(plugin_id)
+        if not self._current_plugin and views.activity_icons:
+            first_view_id = views.activity_icons[0].id
+            logger.info(f"切换到第一个视图: {first_view_id}")
+            self.switch_to_view(first_view_id)
+            self._current_plugin = plugin_id
 
-    def switch_plugin(self, plugin_id: str) -> None:
-        """切换到指定插件
+    def switch_to_view(self, view_id: str) -> None:
+        """切换到指定视图
 
         Args:
-            plugin_id: 插件ID
+            view_id: 视图ID
         """
-        if plugin_id not in self._plugin_views:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"切换到视图: {view_id}")
+        
+        # 获取视图信息
+        view_info = self._view_registry.get_view(view_id)
+        if not view_info:
+            logger.warning(f"未找到视图: {view_id}")
             return
             
-        views = self._plugin_views[plugin_id]
-        
-        print(f"切换到插件: {plugin_id}")
+        # 更新活动栏
+        logger.debug("更新活动栏状态")
+        self._activity_bar.set_active_item(view_id)
         
         # 更新侧边栏
-        self._side_bar.clear()
-        
-        # 找到与活动栏图标ID对应的侧边栏视图
-        if views.activity_icons:
-            side_view_id = views.activity_icons[0].id  # 使用第一个图标的ID
-            print(f"找到活动栏图标ID: {side_view_id}")
-            print(f"可用的侧边栏视图: {list(views.side_views.keys())}")
-            
-            if side_view_id in views.side_views:
-                print(f"找到匹配的侧边栏视图: {side_view_id}")
-                view = views.side_views[side_view_id]
-                self._side_bar.add_view(view, side_view_id)
-                self._side_bar.set_current_view(side_view_id)
-                
-                # 更新活动栏状态
-                self._activity_bar.set_active_item(side_view_id)
-                print(f"已设置活动项: {side_view_id}")
-            else:
-                print(f"未找到匹配的侧边栏视图: {side_view_id}")
+        side_view = self._view_registry.get_view(view_id)
+        if side_view and view_id in self._view_registry._views:
+            logger.debug(f"更新侧边栏视图: {view_id}")
+            self._side_bar.clear()
+            self._side_bar.add_view(side_view["component"], view_id)
+            self._side_bar.set_current_view(view_id)
+        else:
+            logger.debug(f"未找到侧边栏视图: {view_id}")
             
         # 更新工作区
-        if views.work_views:
-            self._work_area.switch_to_plugin_views(views.work_views)
-            
-        self._current_plugin = plugin_id
+        work_views = {}
+        for vid, view in self._view_registry._views.items():
+            if view["type"] == ViewType.WIDGET and "editor" in vid:
+                work_views[vid] = view["component"]
+                logger.debug(f"添加工作区视图: {vid}")
+                
+        if work_views:
+            logger.debug(f"切换工作区视图: {list(work_views.keys())}")
+            self._work_area.switch_to_plugin_views(work_views)
+        else:
+            logger.debug("未找到工作区视图")
 
     def _on_activity_item_clicked(self, item_id: str) -> None:
         """处理活动栏项目点击
         
-        切换到对应插件的视图和功能区
-        
         Args:
             item_id: 点击的项目ID
         """
-        self.switch_plugin(item_id)
+        self.switch_to_view(item_id)
 
     def _on_side_view_changed(self, view_id: str) -> None:
         """处理侧边栏视图变更
@@ -159,9 +196,8 @@ class Layout:
         Args:
             view_id: 变更的视图ID
         """
-        # 当侧边栏视图变更时，不需要更新活动栏状态
-        # 因为活动栏项目代表插件而不是具体视图
-        pass
+        # 当用户在侧边栏切换视图时，更新对应的活动栏状态
+        self._activity_bar.set_active_item(view_id.replace(".side", ""))
 
     @property
     def activity_bar(self) -> ActivityBar:

@@ -22,9 +22,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("GeekFanatic")
         self.setGeometry(100, 100, 1200, 800)
 
-        # 创建布局并注入到app中
-        self._layout = Layout(self)
-        self.app.set_layout(self._layout)
+        # 设置布局
+        self.app.set_layout(self)
 
         # 初始化插件系统
         self.app.initialize_plugins()
