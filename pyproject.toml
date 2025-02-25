@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "geek-fanatic"
 version = "0.1.0"
-description = "一个现代化的 Python IDE"
+description = "一个现代化的 Python GUI 应用程序模板"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
 packages = [{include = "geek_fanatic", from = "src"}]

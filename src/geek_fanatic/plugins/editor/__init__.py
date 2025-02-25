@@ -87,12 +87,12 @@ class GFProtocol:
 class EditorPlugin(Plugin):
     """编辑器插件实现"""
     
-    def __init__(self, ide: Optional[GFProtocol]) -> None:
+    def __init__(self, GF: Optional[GFProtocol]) -> None:
         """初始化插件"""
-        super().__init__(ide)
-        if ide is None:
+        super().__init__(GF)
+        if GF is None:
             raise ValueError("GF instance is required")
-        self._ide_impl = ide
+        self._GF_impl = GF
         self._file_explorer = FileExplorer()
         self._editor_manager = EditorManager()
     
@@ -159,7 +159,7 @@ class EditorPlugin(Plugin):
         ]
         
         for command in commands:
-            self._ide_impl.command_registry.register(command)
+            self._GF_impl.command_registry.register(command)
     
     def _register_configuration(self) -> None:
         """注册编辑器配置"""
@@ -190,7 +190,7 @@ class EditorPlugin(Plugin):
                 },
             }
         }
-        self._ide_impl.config_registry.register(config)
+        self._GF_impl.config_registry.register(config)
     
     def _connect_signals(self) -> None:
         """连接信号"""

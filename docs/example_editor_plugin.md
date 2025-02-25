@@ -20,8 +20,8 @@ editor/
 
 ```python
 class EditorPlugin(Plugin):
-    def __init__(self, ide: Optional[IDEProtocol]) -> None:
-        super().__init__(ide)
+    def __init__(self, GF: Optional[GFProtocol]) -> None:
+        super().__init__(GF)
         self._file_explorer = FileExplorer()
         self._editors: Dict[str, Editor] = {}
 

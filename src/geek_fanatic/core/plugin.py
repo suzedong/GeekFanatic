@@ -46,13 +46,13 @@ class PluginViews:
 class Plugin(ABC):
     """插件基类"""
 
-    def __init__(self, ide: Optional[GFProtocol]) -> None:
+    def __init__(self, GF: Optional[GFProtocol]) -> None:
         """初始化插件
 
         Args:
-            ide: IDE 实例，提供插件运行所需的上下文环境
+            GF: GF 实例，提供插件运行所需的上下文环境
         """
-        self._ide = ide
+        self._GF = GF
 
     @property
     @abstractmethod
@@ -122,7 +122,7 @@ class PluginManager:
         self._plugin_dirs: List[Path] = []
         self._plugin_classes: Dict[str, Type[Plugin]] = {}
         self._logger = logging.getLogger(__name__)
-        self._ide = None
+        self._GF = None
 
     def set_GF(self, GF: GFProtocol) -> None:
         """设置GF实例
@@ -176,12 +176,12 @@ class PluginManager:
         """
         try:
             self._logger.info(f"正在加载插件: {plugin_class.__name__}")
-            plugin = plugin_class(self._ide)
+            plugin = plugin_class(self._GF)
             plugin_id = plugin.id
 
             # 获取并注册插件视图
             views = plugin.get_views()
-            if hasattr(self._ide, 'layout'):
+            if hasattr(self._GF, 'layout'):
                 self._ide.layout.register_plugin_views(plugin_id, views)
                 self._logger.info(f"插件视图注册成功: {plugin_id}")
             else:
