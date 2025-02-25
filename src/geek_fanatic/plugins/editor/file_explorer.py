@@ -7,13 +7,18 @@ from typing import Optional
 
 from PySide6.QtCore import Qt, QDir, QFileInfo, Signal
 from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QTreeView,
     QFileSystemModel,
-    QLabel
+    QLabel,
+    QSizePolicy
 )
+
+# 导入布局常量
+from PySide6.QtWidgets import QLayout
 
 class FileExplorer(QWidget):
     """文件浏览器视图
@@ -28,6 +33,13 @@ class FileExplorer(QWidget):
         """初始化文件浏览器"""
         super().__init__(parent)
         self.setWindowTitle("资源管理器")
+        
+        # 确保视图可见
+        self.setVisible(True)
+        
+        # 设置尺寸策略
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
         self._setup_explorer()
 
     def _setup_explorer(self) -> None:
@@ -35,10 +47,15 @@ class FileExplorer(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
+        
+        # 设置布局的尺寸约束
+        layout.setSizeConstraint(QLayout.SetMinAndMaxSize)
 
         # 创建文件系统模型
         self._model = QFileSystemModel()
-        self._model.setRootPath(QDir.currentPath())
+        current_path = QDir.currentPath()
+        print(f"设置根路径: {current_path}")
+        self._model.setRootPath(current_path)
         
         # 设置过滤器
         self._model.setFilter(QDir.AllDirs | QDir.Files | QDir.NoDotAndDotDot)
@@ -46,12 +63,24 @@ class FileExplorer(QWidget):
         # 创建树视图
         self._tree = QTreeView()
         self._tree.setModel(self._model)
-        self._tree.setRootIndex(self._model.index(QDir.currentPath()))
+        root_index = self._model.index(current_path)
+        print(f"设置根索引: {root_index.isValid()}")
+        self._tree.setRootIndex(root_index)
+        
+        # 设置树视图属性
+        self._tree.setVisible(True)
+        self._tree.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self._tree.setMinimumWidth(200)
+        self._tree.setHeaderHidden(True)  # 隐藏表头
+        self._tree.setExpandsOnDoubleClick(True)
         
         # 只显示文件名列
         self._tree.hideColumn(1)  # 大小
         self._tree.hideColumn(2)  # 类型
         self._tree.hideColumn(3)  # 修改日期
+        
+        # 展开根节点
+        self._tree.expandToDepth(0)
         
         # 设置样式
         self._tree.setStyleSheet("""

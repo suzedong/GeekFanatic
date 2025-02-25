@@ -99,9 +99,9 @@ class Layout:
             
         # 如果是第一个插件，自动显示它的视图
         if len(self._plugin_views) == 1:
-            # 使用第一个活动栏图标的 ID
-            if views.activity_icons:
-                self.switch_plugin(views.activity_icons[0].id)
+            print(f"正在切换到第一个插件: {plugin_id}")
+            # 使用插件ID切换
+            self.switch_plugin(plugin_id)
 
     def switch_plugin(self, plugin_id: str) -> None:
         """切换到指定插件
@@ -114,19 +114,34 @@ class Layout:
             
         views = self._plugin_views[plugin_id]
         
+        print(f"切换到插件: {plugin_id}")
+        
         # 更新侧边栏
         self._side_bar.clear()
-        for view_id, view in views.side_views.items():
-            self._side_bar.add_view(view)
+        
+        # 找到与活动栏图标ID对应的侧边栏视图
+        if views.activity_icons:
+            side_view_id = views.activity_icons[0].id  # 使用第一个图标的ID
+            print(f"找到活动栏图标ID: {side_view_id}")
+            print(f"可用的侧边栏视图: {list(views.side_views.keys())}")
+            
+            if side_view_id in views.side_views:
+                print(f"找到匹配的侧边栏视图: {side_view_id}")
+                view = views.side_views[side_view_id]
+                self._side_bar.add_view(view, side_view_id)
+                self._side_bar.set_current_view(side_view_id)
+                
+                # 更新活动栏状态
+                self._activity_bar.set_active_item(side_view_id)
+                print(f"已设置活动项: {side_view_id}")
+            else:
+                print(f"未找到匹配的侧边栏视图: {side_view_id}")
             
         # 更新工作区
         if views.work_views:
             self._work_area.switch_to_plugin_views(views.work_views)
             
         self._current_plugin = plugin_id
-        
-        # 更新活动栏状态
-        self._activity_bar.set_active_item(plugin_id)
 
     def _on_activity_item_clicked(self, item_id: str) -> None:
         """处理活动栏项目点击
@@ -137,7 +152,6 @@ class Layout:
             item_id: 点击的项目ID
         """
         self.switch_plugin(item_id)
-        self._side_bar.set_current_view(item_id)
 
     def _on_side_view_changed(self, view_id: str) -> None:
         """处理侧边栏视图变更
@@ -145,7 +159,9 @@ class Layout:
         Args:
             view_id: 变更的视图ID
         """
-        self._activity_bar.set_active_item(view_id)
+        # 当侧边栏视图变更时，不需要更新活动栏状态
+        # 因为活动栏项目代表插件而不是具体视图
+        pass
 
     @property
     def activity_bar(self) -> ActivityBar:

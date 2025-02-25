@@ -32,7 +32,7 @@ class GeekFanatic(QObject):
 
         # 初始化核心管理器
         self._plugin_manager = PluginManager()
-        self._plugin_manager.set_ide(self)
+        self._plugin_manager.set_GF(self)
         
         self._theme_manager = ThemeManager()
         self._window_manager = WindowManager()

@@ -15,10 +15,7 @@ from PySide6.QtWidgets import (
     QSpacerItem
 )
 
-from geek_fanatic.resources.icons import (
-    EXPLORER_SVG, SEARCH_SVG, GIT_SVG,
-    DEBUG_SVG, EXTENSIONS_SVG, SETTINGS_SVG
-)
+from geek_fanatic.resources.icons import SETTINGS_SVG
 
 def create_icon_from_svg(svg_content: str, size: int = 24) -> QIcon:
     """从 SVG 内容创建图标"""
@@ -94,19 +91,8 @@ class ActivityBar(QWidget):
         
         self._setup_ui()
         self._setup_style()
-        self._setup_default_items()
-    
-    def _setup_default_items(self) -> None:
-        """设置默认图标项目"""
-        
-        # 核心功能图标
-        self.add_item(
-            "explorer",
-            create_icon_from_svg(EXPLORER_SVG),
-            "文件资源管理器"
-        )
-        
-        # 底部项目
+
+        # 添加设置按钮到底部
         self.add_item(
             "settings",
             create_icon_from_svg(SETTINGS_SVG),

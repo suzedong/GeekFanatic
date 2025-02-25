@@ -15,8 +15,8 @@ from PySide6.QtWidgets import QWidget
 logging.basicConfig(level=logging.DEBUG)
 
 @runtime_checkable
-class IDEProtocol(Protocol):
-    """IDE 接口协议"""
+class GFProtocol(Protocol):
+    """GF 接口协议"""
     pass
 
 class ActivityIcon:
@@ -46,7 +46,7 @@ class PluginViews:
 class Plugin(ABC):
     """插件基类"""
 
-    def __init__(self, ide: Optional[IDEProtocol]) -> None:
+    def __init__(self, ide: Optional[GFProtocol]) -> None:
         """初始化插件
 
         Args:
@@ -124,14 +124,14 @@ class PluginManager:
         self._logger = logging.getLogger(__name__)
         self._ide = None
 
-    def set_ide(self, ide: IDEProtocol) -> None:
-        """设置IDE实例
+    def set_GF(self, GF: GFProtocol) -> None:
+        """设置GF实例
 
         Args:
-            ide: IDE实例
+            GF: GF实例
         """
-        self._ide = ide
-        self._logger.info("IDE实例已设置")
+        self._GF = GF
+        self._logger.info("GF实例已设置")
 
     def add_plugin_directory(self, directory: Path) -> None:
         """添加插件目录

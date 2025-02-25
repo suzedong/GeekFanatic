@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/icons">
+        <file alias="explorer.svg">icons/explorer.svg</file>
+        <file alias="debug.svg">icons/debug.svg</file>
+        <file alias="extensions.svg">icons/extensions.svg</file>
+        <file alias="git.svg">icons/git.svg</file>
+        <file alias="search.svg">icons/search.svg</file>
+        <file alias="settings.svg">icons/settings.svg</file>
+    </qresource>
+</RCC>

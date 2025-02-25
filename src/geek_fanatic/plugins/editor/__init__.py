@@ -2,6 +2,8 @@
 编辑器插件入口模块
 """
 
+from geek_fanatic.resources import icons_rc  # 导入图标资源
+
 from pathlib import Path
 from typing import Optional, Dict
 
@@ -18,9 +20,6 @@ from geek_fanatic.core.widgets.work_area import WorkTab
 from .editor import Editor
 from .file_explorer import FileExplorer
 from .commands.basic import DeleteCommand, RedoCommand, UndoCommand
-
-# 导入资源文件
-import geek_fanatic.resources.resources_rc
 
 def load_icon(name: str) -> QIcon:
     """加载图标"""
@@ -78,8 +77,8 @@ class EditorManager(QWidget):
                 break
         self._tab_widget.removeTab(index)
 
-class IDEProtocol:
-    """IDE 接口协议"""
+class GFProtocol:
+    """GF 接口协议"""
     command_registry: CommandRegistry
     config_registry: ConfigRegistry
     view_registry: ViewRegistry
@@ -88,11 +87,11 @@ class IDEProtocol:
 class EditorPlugin(Plugin):
     """编辑器插件实现"""
     
-    def __init__(self, ide: Optional[IDEProtocol]) -> None:
+    def __init__(self, ide: Optional[GFProtocol]) -> None:
         """初始化插件"""
         super().__init__(ide)
         if ide is None:
-            raise ValueError("IDE instance is required")
+            raise ValueError("GF instance is required")
         self._ide_impl = ide
         self._file_explorer = FileExplorer()
         self._editor_manager = EditorManager()
